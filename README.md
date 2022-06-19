@@ -1,4 +1,4 @@
-# vue-admin
+# vue-element-admin
 
 ## Project setup
 ```
@@ -22,3 +22,12 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Reference
+[https://v3.cn.vuejs.org/](https://v3.cn.vuejs.org/)
+
+[https://element-plus.gitee.io/zh-CN/](https://element-plus.gitee.io/zh-CN/)
+
+[http://mockjs.com/](http://mockjs.com/)
+
+[http://mockjs.com/examples.html](http://mockjs.com/examples.html)

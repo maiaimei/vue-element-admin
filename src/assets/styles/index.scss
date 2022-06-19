@@ -1,0 +1,137 @@
+@use '~element-plus/theme-chalk/src/index' as *;
+
+$app-bg: #f0f2f5;
+$sidebar-bg: #00152a;
+$sidebar-logo-bg: #002140;
+$sidebar-menu-active-bg: #409EFF;
+$sidebar-menu-text: #fff;
+$sidebar-width: 260px !important;
+$sidebar-collapse-width: 64px !important;
+$header-height: 60px;
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#app {
+    height: 100%;
+    background-color: $app-bg;
+}
+
+.sidebar {
+    background-color: $sidebar-bg;
+    box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+    width: $sidebar-width;
+
+    .logo {
+        background-color: $sidebar-logo-bg;
+        color: #fff;
+        line-height: $header-height;
+
+        img {
+            height: 32px;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 0 0 12px;
+            padding: 0;
+            text-align: center;
+        }
+    }
+
+    .el-menu {
+        border-right: none;
+        background-color: $sidebar-bg;
+    }
+
+    .el-menu-item,
+    .el-sub-menu__title {
+        color: $sidebar-menu-text;
+
+        &:hover,
+        &:focus {
+            background-color: $sidebar-menu-active-bg;
+        }
+    }
+}
+
+.sidebar-collapse {
+    width: $sidebar-collapse-width;
+
+    .logo {
+        h1 {
+            display: none;
+        }
+    }
+}
+
+.menu-container,
+.main-container {
+    height: calc(100vh - $header-height);
+}
+
+.header {
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+
+    * {
+        line-height: $header-height;
+    }
+
+    .toggle-sidebar {
+        height: $header-height;
+        display: flex;
+        align-items: center;
+
+        i {
+            font-size: 20px;
+            cursor: pointer;
+        }
+    }
+
+    .breadcrumb-container {
+        padding-left: 10px;
+    }
+
+    .header-toolbar {
+        .iconfont {
+            font-size: 20px;
+            padding: 0 12px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    }
+}
+
+.el-main {
+    .el-result.error {
+        padding-top: 15%;
+    }
+}
+
+.el-pagination {
+    justify-content: right;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
