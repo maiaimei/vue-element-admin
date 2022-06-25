@@ -1,28 +1,60 @@
+import _ from 'lodash'
 import Mock from 'mockjs'
-import { IResult, IPageResult } from '@/types'
+import { IResult, IPageResult, IPageQueryData } from '@/types'
 
-const data: IPageResult[] = Mock.mock({
-  'records|220': [{
-    'staffId|+1': 1000,
-    staffNumber: '@string("number",6,6)',
-    name: '@cname',
-    'sex|0-1': '0',
-    birthday: '@date',
-    idcard: '@id',
-    mobile: /1[3456789]\d{9}/,
-    email: /[1-9]{6,12}@qq\.com/,
-    address: '@city(true)',
-    orgName: '@csentence(6, 12)'
-  }],
-  total: 220,
-  current: 1,
-  size: 10
-})
-
-const result: IResult = {
-  code: 200,
-  message: null,
-  data: data
+export interface IStaff {
+  staffId: number,
+  staffNumber: string,
+  name: string,
+  sex: string,
+  birthday: string,
+  idcard: string,
+  mobile: string,
+  email: string,
+  address: string,
+  orgName: string
 }
 
-export default result
+const staffs: Array<IStaff> = []
+for (let i = 1; i <= 303; i++) {
+  staffs.push(Mock.mock(
+    {
+      staffId: '@increment()',
+      staffNumber: '@string("number",6,6)',
+      name: '@cname',
+      sex: /[MF]/,
+      birthday: '@date',
+      idcard: '@id',
+      mobile: /1[3456789]\d{9}/,
+      email: /[1-9]{6,12}@qq\.com/,
+      address: '@city(true)',
+      orgName: '@csentence(6, 12)'
+    }
+  ))
+}
+
+Mock.mock('/api/staffs', 'post', (options: { body: string }) => {
+  const jsonData: IPageQueryData = JSON.parse(options.body)
+  const current = jsonData.current
+  const size = jsonData.size
+  Reflect.deleteProperty(jsonData, 'current')
+  Reflect.deleteProperty(jsonData, 'size')
+  const searchData = jsonData
+  let records
+  if (Object.keys(searchData).length === 0) {
+    records = _.cloneDeep(staffs)
+  } else {
+    records = _.filter(staffs, searchData)
+  }
+
+  return {
+    code: 200,
+    message: null,
+    data: {
+      records: _.chunk(records, size)[current - 1],
+      total: records.length,
+      current: current,
+      size: size
+    }
+  } as IResult<IPageResult<IStaff>>
+})

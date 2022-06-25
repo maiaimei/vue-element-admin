@@ -1,13 +1,8 @@
 import { ElLoading } from 'element-plus'
+import { LoadingInstance } from 'element-plus/es/components/loading/src/loading'
 import axios from 'axios'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let loading: any
-function closeLoading() {
-  if (loading) {
-    loading.close()
-  }
-}
+let loading: LoadingInstance
 
 const $axios = axios.create({
   baseURL: process.env.API_URL,
@@ -23,15 +18,15 @@ $axios.interceptors.request.use(function (config) {
   })
   return config
 }, function (error) {
-  closeLoading()
+  loading.close()
   return Promise.reject(error)
 })
 
 $axios.interceptors.response.use(function (response) {
-  closeLoading()
+  loading.close()
   return response
 }, function (error) {
-  closeLoading()
+  loading.close()
   return Promise.reject(error)
 })
 

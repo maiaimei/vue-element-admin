@@ -1,3 +1,4 @@
+import Mock from 'mockjs'
 import { IResult, IMenuItem } from '@/types'
 
 const menus: Array<IMenuItem> = [
@@ -121,10 +122,10 @@ const menus: Array<IMenuItem> = [
   }
 ]
 
-const result: IResult = {
-  code: 200,
-  message: null,
-  data: menus
-}
-
-export default result
+Mock.mock('/api/menus', 'get', () => {
+  return {
+    code: 200,
+    message: null,
+    data: menus
+  } as IResult<Array<IMenuItem>>
+})

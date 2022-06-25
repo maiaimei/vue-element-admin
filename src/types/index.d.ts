@@ -1,14 +1,24 @@
-export interface IResult {
-  code: number,
-  message: string | null,
-  data: object | null
+export interface HashMap {
+  [propName: string]: unknown
 }
 
-export interface IPageResult {
-  records: Array<object> | null,
+export interface IResult<T> {
+  code: number,
+  message: string | null,
+  data: T | null
+}
+
+export interface IPageResult<T> {
+  records: Array<T> | null,
   total: number,
   current: number,
   size: number
+}
+
+export interface IPageQueryData {
+  current: number,
+  size: number,
+  [propName: string]: unknown
 }
 
 export interface IMenuItem {
@@ -25,10 +35,17 @@ export interface ChooseOption {
 }
 
 export interface FormItem {
+  label?: string,
+  cols?: Array<{
+    span: number,
+    items?: Array<FormItem>,
+    html?: string,
+    class?: string
+  }>,
+  rules?: FormRules,
   type: string,
-  subType?: string,
   prop: string,
-  label: string,
+  subType?: string,
   min?: number,
   max?: number,
   minTime?: string,
@@ -38,13 +55,12 @@ export interface FormItem {
   step?: string,
   format?: string,
   valueFormat?: string,
-  width?: string
-  placeholder?: string,
   multiple?: boolean,
   options?: Array<ChooseOption>,
   filterable?: boolean,
   disabled?: boolean,
   action?: string,
   tip?: string,
-  handleChange?: (value: number) => { /** */ }
+  placeholder?: string,
+  handleChange?: (value: number) => { /** */ },
 }

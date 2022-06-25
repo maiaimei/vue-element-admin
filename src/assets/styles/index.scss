@@ -124,6 +124,13 @@ body {
     justify-content: right;
 }
 
+.el-select,
+.el-date-editor.el-input,
+.el-date-editor.el-input__wrapper,
+.el-input-number {
+    width: 100%;
+}
+
 .float-left {
     float: left;
 }
@@ -134,4 +141,8 @@ body {
 
 .clear {
     clear: both;
+}
+
+.text-center {
+    text-align: center;
 }

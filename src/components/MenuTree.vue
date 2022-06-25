@@ -12,12 +12,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { listMenus } from '@/api'
+import { meuns } from '@/api'
 import { IMenuItem } from '@/types'
 import MenuSubTree from './MenuSubTree.vue'
 
 const menus = ref<IMenuItem[]>([])
-listMenus.then(res => { menus.value = res.data.data })
+meuns.findAll().then(res => { menus.value = res.data.data })
 </script>
 
 <style scoped lang="scss">

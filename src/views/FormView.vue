@@ -1,65 +1,107 @@
 <template>
-  <ex-form :formItems="formItems" :formRules="formRules" :formData="formData" :labeWidth="labeWidth"
-    @submitForm="submitForm" />
+  <ex-form :key="timer" :formItems="formItems" :formData="formData" :labeWidth="labeWidth" @submitForm="submitForm" />
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
-import type { FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
 import { FormItem } from '@/types'
 import ExForm from '@/components/ExForm.vue'
 
-const labeWidth = 100
+// 在父组件中刷新子组件，如果这一次的key值和上一次的key值不一样，会重新渲染dom元素，否则保持上一次的元素状态。
+const timer = ref(new Date().getTime())
+const reloadForm = () => {
+  timer.value = new Date().getTime()
+}
+
+const labeWidth = 120
 const formItems: FormItem[] = [
   {
     type: 'text',
-    prop: 'text',
-    placeholder: '请输入文本',
-    label: '文本框'
+    prop: 'username',
+    label: '账号',
+    placeholder: '请输入账号',
+    rules: [
+      {
+        required: true,
+        message: '请输入账号'
+      }
+    ]
   },
   {
     type: 'password',
     prop: 'password',
+    label: '密码',
     placeholder: '请输入密码',
-    label: '密码框'
+    rules: [
+      {
+        required: true,
+        message: '请输入密码'
+      }
+    ]
   },
   {
     type: 'textarea',
-    prop: 'textarea',
-    placeholder: '请输入文本',
-    label: '文本域'
+    prop: 'remark',
+    label: '备注',
+    placeholder: '请输入备注',
+    rules: [
+      {
+        required: true,
+        message: '请输入备注'
+      }
+    ]
   },
   {
     type: 'select',
-    prop: 'select',
-    placeholder: '请选择',
-    label: '下拉框',
-    options: [
-      { text: '选项1', value: 'key1' },
-      { text: '选项2', value: 'key2' },
-      { text: '选项3', value: 'key3' },
-      { text: '选项4', value: 'key4' },
-      { text: '选项5', value: 'key5' }
-    ],
+    prop: 'hobby',
+    label: '兴趣爱好',
+    placeholder: '请选择兴趣爱好',
     multiple: true,
-    filterable: true
+    filterable: true,
+    options: [
+      { text: '编程', value: 'programming' },
+      { text: '音乐', value: 'music' },
+      { text: '烹饪', value: 'cooking' },
+      { text: '其他', value: 'other' }
+    ],
+    rules: [
+      {
+        type: 'array',
+        message: '请至少选择一项',
+        trigger: 'change'
+      }
+    ]
   },
   {
     type: 'checkbox',
-    prop: 'checkbox',
-    label: '复选框',
+    prop: 'language',
+    label: '编程语言',
     options: [
-      { text: '选择一', value: 'key1' },
-      { text: '选择二', value: 'key2' }
+      { text: 'Java', value: 'Java' },
+      { text: 'JavaScript', value: 'JavaScript' },
+      { text: 'Python', value: 'Python' }
+    ],
+    rules: [
+      {
+        type: 'array',
+        required: true,
+        message: '请至少选择一项'
+      }
     ]
   },
   {
     type: 'radio',
-    prop: 'radio',
-    label: '单选框',
+    prop: 'sex',
+    label: '性别',
     options: [
-      { text: '选择一', value: 'key1' },
-      { text: '选择二', value: 'key2' }
+      { text: '男', value: 'M' },
+      { text: '女', value: 'F' }
+    ],
+    rules: [
+      {
+        required: true,
+        message: '请至少选择一项'
+      }
     ]
   },
   {
@@ -67,14 +109,20 @@ const formItems: FormItem[] = [
     subType: 'date',
     prop: 'datepicker',
     placeholder: '请选择日期',
-    label: '日期'
+    label: '日期',
+    rules: [
+      { type: 'date', message: '请选择日期' }
+    ]
   },
   {
     type: 'timepicker',
     subType: 'datetime',
     prop: 'timepicker',
     placeholder: '请选择时间1',
-    label: '时间1'
+    label: '时间1',
+    rules: [
+      { type: 'string', message: '请选择时间' }
+    ]
   },
   {
     type: 'timeselect',
@@ -102,50 +150,69 @@ const formItems: FormItem[] = [
     action: 'https://jsonplaceholder.typicode.com/posts/',
     multiple: true,
     tip: '小于 500kb 的 jpg/png 文件'
+  },
+  {
+    type: 'cols',
+    label: '外出时间',
+    prop: 'startEndDate',
+    cols: [
+      {
+        span: 11,
+        items: [
+          {
+            type: 'datepicker',
+            subType: 'date',
+            prop: 'startDate',
+            placeholder: '请选择开始日期',
+            rules: [
+              {
+                required: true,
+                message: '开始日期不能为空'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        span: 2,
+        class: 'text-center',
+        html: '<span class="text-gray-500">-</span>'
+      },
+      {
+        span: 11,
+        items: [
+          {
+            type: 'datepicker',
+            subType: 'date',
+            prop: 'endDate',
+            placeholder: '请选择结束日期',
+            rules: [
+              {
+                required: true,
+                message: '结束日期不能为空'
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]
 
-const formRules: FormRules = {
-  text: [
-    { message: '请输入文本' }
-  ],
-  password: [
-    { message: '请输入密码' }
-  ],
-  textarea: [
-    { message: '请填写文本' }
-  ],
-  // 多选时需要设置 type: 'array' 否则报错
-  select: [
-    { type: 'array', message: '请至少选择一个' }
-  ],
-  checkbox: [
-    { type: 'array', message: '请至少选择一个' }
-  ],
-  radio: [
-    { message: '请至少选择一个' }
-  ],
-  datapicker: [
-    { type: 'date', message: '请选择日期' }
-  ],
-  timepicker: [
-    { type: 'string', message: '请选择时间' }
-  ]
-}
-
 const formData: { [propName: string]: unknown } = reactive({
-  text: 'test text',
-  textarea: 'test textarea',
-  select: ['key1', 'key2'],
-  checkbox: ['key1'],
+  username: 'admin',
+  password: '123456',
+  textarea: '描述',
   number: 2,
-  datepicker: '2022-06-22'
+  datepicker: '2022-06-22',
+  datepicker2: '',
+  datepicker3: ''
 })
 
 const submitForm = (data: { [propName: string]: unknown }) => {
   const jsonData = JSON.parse(JSON.stringify(data))
-  // console.log('接收子组件的数据', jsonData)
-  console.log(data === formData)
+  console.log('接收子组件的数据', jsonData)
+  reloadForm()
 }
 </script>
 
