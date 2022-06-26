@@ -55,8 +55,17 @@
         </el-header>
         <el-scrollbar class="main-container">
           <el-main>
-            <router-view>
-            </router-view>
+            <el-card>
+              <el-tabs type="card" v-model="activeTab" @tab-click="clickTab" @tab-remove="removeTab" closable>
+                <el-tab-pane v-for="item in openTabs" :key="item.id" :name="item.id" :label="item.title">
+                </el-tab-pane>
+              </el-tabs>
+              <router-view v-slot="{ Component }">
+                <keep-alive>
+                  <component :is="Component" />
+                </keep-alive>
+              </router-view>
+            </el-card>
           </el-main>
         </el-scrollbar>
       </el-container>
@@ -68,7 +77,7 @@
 import { ref, watch, computed } from 'vue'
 import { RouteLocationMatched, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, TabsPaneContext } from 'element-plus'
 import { toggleFullscreen } from '@/utils/dom.util'
 import MenuTree from './MenuTree.vue'
 
@@ -132,6 +141,64 @@ const breadcrumbs = computed(() => store.state.breadcrumbs)
 watch(() => router.currentRoute.value.matched, () => {
   store.commit('UPDATEBREADCRUMBS', getBreadcrumbs())
 }, { immediate: true, deep: true })
+
+const activeTab = computed({
+  get() {
+    return store.state.activeTab
+  },
+  set(value) {
+    store.commit('UPDATEACTIVETAB', value)
+  }
+})
+
+const openTabs = computed({
+  get() {
+    return store.state.openTabs
+  },
+  set(value) {
+    store.commit('UPDATEOPENTABS', value)
+  }
+})
+
+const removeTab = (targetId: string) => {
+  const tabs = openTabs.value
+  if (tabs.length === 1) {
+    // 保留第一个标签
+    return
+  }
+  let activeId = activeTab.value
+  if (activeId === targetId) {
+    tabs.forEach((tab, index) => {
+      if (tab.id === targetId) {
+        const nextTab = tabs[index + 1] || tabs[index - 1]
+        if (nextTab) {
+          activeId = nextTab.id
+        }
+      }
+    })
+  }
+  activeTab.value = activeId
+  openTabs.value = tabs.filter((tab) => tab.id !== targetId)
+  updateRoute(activeId)
+}
+
+const clickTab = (pane: TabsPaneContext, ev: Event) => {
+  const tab = JSON.parse(JSON.stringify(pane))
+  updateRoute(tab.props.name)
+}
+
+const updateRoute = (activeId: string) => {
+  const tab = openTabs.value.find(item => item.id === activeId)
+  if (tab) {
+    const tabJson = JSON.parse(JSON.stringify(tab))
+    router.push(tabJson.path)
+  }
+}
+
+const isHome = () => {
+  //
+}
+
 </script>
 
 <style scoped lang="scss">

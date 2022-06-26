@@ -128,7 +128,7 @@ const emit = defineEmits(['pageQuery', 'handleSelectionChange'])
 
 const locale = ref(zhCn)
 
-const reservedHeight = 60
+const reservedHeight = 65
 const tableRef = ref()
 const tableHeight = ref(250)
 const paginationRef = ref()

@@ -115,6 +115,8 @@ body {
 }
 
 .el-main {
+    padding: 8px;
+
     .el-result.error {
         padding-top: 15%;
     }
@@ -157,4 +159,8 @@ body {
     .el-link:not(:last-child) {
         margin-right: 10px;
     }
+}
+
+.el-tabs__nav .el-tabs__item:nth-child(1) .el-icon {
+    display: none;
 }

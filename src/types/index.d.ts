@@ -21,11 +21,12 @@ export interface IPageQueryData {
   [propName: string]: unknown
 }
 
-export interface IMenuItem {
+export interface MenuItem {
+  id: string,
   title: string,
   path: string,
   icon?: string,
-  children?: Array<IMenuItem>
+  children?: Array<MenuItem>
 }
 
 // select, checkobx, radio 的 option
