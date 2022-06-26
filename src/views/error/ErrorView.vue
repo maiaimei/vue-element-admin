@@ -12,7 +12,7 @@ import { ComponentInternalInstance, getCurrentInstance } from 'vue'
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 const backToHome = () => {
-  proxy.$root.$router.replace('/')
+  proxy?.$root?.$router.replace('/')
 }
 </script>
 

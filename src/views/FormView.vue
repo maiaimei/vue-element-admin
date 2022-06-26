@@ -1,5 +1,5 @@
 <template>
-  <ex-form :key="timer" :formItems="formItems" :formData="formData" :labeWidth="labeWidth" @submitForm="submitForm" />
+  <ex-form :key="timer" :formItems="formItems" :formData="formData" :labelWidth="labelWidth" @submitForm="submitForm" />
 </template>
 
 <script setup lang="ts">
@@ -13,7 +13,7 @@ const reloadForm = () => {
   timer.value = new Date().getTime()
 }
 
-const labeWidth = 120
+const labelWidth = 120
 const formItems: FormItem[] = [
   {
     type: 'text',

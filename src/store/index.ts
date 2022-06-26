@@ -2,13 +2,17 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    breadcrumbs: []
+    breadcrumbs: [],
+    isExpandFormItem: false
   },
   getters: {
   },
   mutations: {
-    updateBreadcrumbs(state, value) {
+    UPDATEBREADCRUMBS(state, value) {
       state.breadcrumbs = value
+    },
+    UPDATEISEXPANDFORMITEM(state) {
+      state.isExpandFormItem = !state.isExpandFormItem
     }
   },
   actions: {

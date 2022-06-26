@@ -146,3 +146,15 @@ body {
 .text-center {
     text-align: center;
 }
+
+.el-form--inline .el-form-item {
+    &.hidden {
+        display: none;
+    }
+}
+
+.operation {
+    .el-link:not(:last-child) {
+        margin-right: 10px;
+    }
+}

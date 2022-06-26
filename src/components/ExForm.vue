@@ -1,8 +1,9 @@
 <template>
-  <el-form ref="formRef" :model="formData" :label-width="labeWidth + 'px'" :inline="isSearchForm">
+  <el-form ref="formRef" :model="formData" :label-width="labelWidth + 'px'" :inline="isSearchForm">
     <template v-for="(item, index) of formItems" :key="index">
       <template v-if="item.type == 'cols'">
-        <el-form-item :label="item.label">
+        <el-form-item :label="item.label"
+          :class="{ 'hidden': item.hidden && !isExpand, 'default-hidden': item.hidden !== undefined }">
           <template v-for="(col, colIndex) of item.cols" :key="colIndex">
             <el-col v-if="col.html" :span="col.span" :class="col.class" v-html="col.html"></el-col>
             <el-col v-else :span="col.span" :class="col.class">
@@ -15,7 +16,8 @@
         </el-form-item>
       </template>
       <template v-else>
-        <el-form-item :label="item.label" :prop="item.prop" :rules="item.rules">
+        <el-form-item :label="item.label" :prop="item.prop" :rules="item.rules"
+          :class="{ 'hidden': item.hidden && !isExpand, 'default-hidden': item.hidden !== undefined }">
           <ex-form-element :item="item" :model="formData"></ex-form-element>
         </el-form-item>
       </template>
@@ -24,15 +26,21 @@
       <el-button @click="submitForm(formRef)" type="primary" v-if="isSearchForm">查询</el-button>
       <el-button @click="submitForm(formRef)" type="primary" v-if="!isSearchForm">提交</el-button>
       <el-button @click="resetForm(formRef)">重置</el-button>
+      <el-link v-if="isSearchForm" :icon="isExpand ? ArrowUpBold : ArrowDownBold" :underline="false"
+        style="margin-left:10px;" @click="expandFormItem">{{ isExpand ? '收起' : '展开' }}</el-link>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
 import type { FormInstance } from 'element-plus'
 import { FormItem } from '@/types'
 import ExFormElement from '@/components/ExFormElement.vue'
+
+const store = useStore()
 
 // defineProps 接收与 props 选项相同的值
 const props = defineProps({
@@ -58,7 +66,7 @@ const props = defineProps({
     }
   },
   // 标签宽度
-  labeWidth: {
+  labelWidth: {
     type: Number,
     default: () => 100
   },
@@ -89,6 +97,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
   emit('resetForm', formData)
+}
+
+const isExpand = computed(() => store.state.isExpandFormItem)
+const expandFormItem = () => {
+  store.commit('UPDATEISEXPANDFORMITEM')
 }
 </script>
 

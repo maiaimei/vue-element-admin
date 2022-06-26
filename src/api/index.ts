@@ -1,8 +1,8 @@
+import { HashMap } from '@/types'
 import $axios from '@/utils/axios.util'
-import { IPageQueryData } from '@/types'
 
 export const staffs = {
-  pageQuery: async (searchData: IPageQueryData) => {
+  pageQuery: async (searchData: HashMap) => {
     return await $axios.post('/api/staffs', searchData)
   }
 }

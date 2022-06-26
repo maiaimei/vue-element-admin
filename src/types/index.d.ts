@@ -9,7 +9,7 @@ export interface IResult<T> {
 }
 
 export interface IPageResult<T> {
-  records: Array<T> | null,
+  records: Array<T>,
   total: number,
   current: number,
   size: number
@@ -29,10 +29,10 @@ export interface IMenuItem {
 }
 
 // select, checkobx, radio 的 option
-export interface ChooseOption {
-  value: string,
-  text: string
-}
+// export interface ChooseOption {
+//   value: string,
+//   text: string
+// }
 
 export interface FormItem {
   label?: string,
@@ -56,11 +56,21 @@ export interface FormItem {
   format?: string,
   valueFormat?: string,
   multiple?: boolean,
-  options?: Array<ChooseOption>,
+  options?: Array<{ text: unknown, value: unknown }>, // Array<ChooseOption>,
   filterable?: boolean,
   disabled?: boolean,
   action?: string,
   tip?: string,
   placeholder?: string,
   handleChange?: (value: number) => { /** */ },
+  hidden?: boolean
+}
+
+export interface ITableColumn {
+  type?: string,
+  slot?: string,
+  fixed?: string | boolean,
+  minWidth?: string | number,
+  height?: string,
+  [propName: string]: unknown
 }

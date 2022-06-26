@@ -130,7 +130,7 @@ const breadcrumbs = computed(() => store.state.breadcrumbs)
 
 // 监听路由变化，更新 vuex 中的 breadcrumbs
 watch(() => router.currentRoute.value.matched, () => {
-  store.commit('updateBreadcrumbs', getBreadcrumbs())
+  store.commit('UPDATEBREADCRUMBS', getBreadcrumbs())
 }, { immediate: true, deep: true })
 </script>
 

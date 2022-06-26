@@ -1,142 +1,229 @@
 <template>
-  <ex-form :isSearchForm="true" :formItems="formItems" :formData="formData" @submitForm="submitForm"
-    @resetForm="resetForm" />
-  <el-config-provider :locale="locale">
-    <el-table :data="records" style="width: 100%" :height="tableHeight" ref="tableRef" @filter-change="filterAll">
-      <el-table-column fixed type="selection" width="55" />
-      <el-table-column fixed prop="staffNumber" label="工号" width="100" column-key="staffNumber" />
-      <el-table-column fixed prop="name" label="姓名" width="100" />
-      <!-- :filter-method="filterSex" -->
-      <el-table-column prop="sex" label="性别" width="100" :formatter="formatterSex" :filters="[
-        { text: '男', value: 'M' },
-        { text: '女', value: 'F' }
-      ]" column-key="sex" />
-      <el-table-column prop="birthday" label="出生日期" width="150" />
-      <el-table-column prop="idcard" label="身份证号" width="180" />
-      <el-table-column prop="mobile" label="手机号码" width="150" />
-      <el-table-column prop="email" label="电子邮箱" width="200" />
-      <el-table-column prop="orgName" label="所属组织" width="250" />
-    </el-table>
-    <el-pagination ref="paginationRef" layout="total, sizes, prev, pager, next, jumper" :total="total"
-      v-model:currentPage="current" v-model:page-size="size" :page-sizes="[10, 20, 30, 50, 100]" :default-page-size="10"
-      :pager-count="5" @size-change="handleSizeChange" @current-change="handleCurrentChange" background prev-text="上一页"
-      next-text="下一页">
-    </el-pagination>
-  </el-config-provider>
+  <!-- :tableRowClassName="tableRowClassName" :tableBorder="true" -->
+  <ex-list ref="testExList" :tableButtons="tableButtons" :tableColumns="tableColumns" :formLabelWidth="100"
+    :formItems="formItems" :formData="formData" @pageQuery="pageQuery" @handleSelectionChange="handleSelectionChange"
+    :tablePageSize="50">
+    <template v-slot:action>
+      <el-table-column align="center" label="操作" width="250" class-name="operation" fixed="right">
+        <template #default="scope">
+          <el-link @click="handleView(scope.row)" :underline="false">查看</el-link>
+          <el-link @click="handleModify(scope.row)" :underline="false">修改</el-link>
+          <el-button @click="becomeRegularStaff(scope.row)" type="primary">转正</el-button>
+          <el-button @click="handleDismiss(scope.row)" type="warning">离职</el-button>
+        </template>
+      </el-table-column>
+    </template>
+  </ex-list>
+
+  <!-- Form -->
+  <el-dialog v-model="dialogFormVisible" title="Shipping address">
+    <el-form :model="form">
+      <el-form-item label="Promotion name" :label-width="formLabelWidth">
+        <el-input v-model="form.name" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="Zones" :label-width="formLabelWidth">
+        <el-select v-model="form.region" placeholder="Please select a zone">
+          <el-option label="Zone No.1" value="shanghai" />
+          <el-option label="Zone No.2" value="beijing" />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">关闭</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">提交</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
+import ExList from '@/components/ExList.vue'
 import _ from 'lodash'
-import { reactive, ref, unref, nextTick, onMounted } from 'vue'
+import { reactive, ref, getCurrentInstance, onMounted } from 'vue'
 import { TableColumnCtx } from 'element-plus/lib/components/table/src/table-column/defaults'
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-import { getBoundingClientRect } from '@/utils/dom.util'
-import { staffs } from '@/api'
-import { HashMap, IPageQueryData, FormItem, IPageResult } from '@/types'
-import ExForm from '@/components/ExForm.vue'
+import { ElMessageBox } from 'element-plus'
+import { HashMap, ITableColumn, IPageResult, FormItem } from '@/types'
 import { IStaff } from '@/mock/staff'
+import { staffs } from '@/api'
 
-const locale = ref(zhCn)
-
-const reservedHeight = 60
-const tableRef = ref()
-const tableHeight = ref(250)
-const paginationRef = ref()
-const records = ref<IStaff[]>([])
-const total = ref(1)
-const current = ref(1)
-const size = ref(20)
-const searchData = reactive<IPageQueryData>({ current: current.value, size: size.value })
-const flag = ref(false)
-
-async function computeTableHeight() {
-  const tableProxy = unref(tableRef)
-  const tableEle = tableProxy?.$el as Element
-  const tableRect = getBoundingClientRect(tableEle) as DOMRect
-
-  tableHeight.value = window.innerHeight - tableRect.top - reservedHeight
-  window.onresize = function () {
-    tableHeight.value = window.innerHeight - tableRect.top - reservedHeight
-  }
-}
-
+let currentInstance: any
 onMounted(() => {
-  // nextTick 将回调推迟到下一个 DOM 更新周期之后执行
-  nextTick(() => {
-    computeTableHeight()
-  })
+  currentInstance = getCurrentInstance()
 })
 
-const pageQuery = (searchData: IPageQueryData) => {
-  staffs.pageQuery(JSON.parse(JSON.stringify(searchData))).then(res => {
+// 新增、修改、删除、上下移等操作后刷新表格
+const refreshTable = () => {
+  currentInstance.ctx.$refs.testExList.refreshTable()
+}
+
+// 选中行
+const selectRows = ref<IStaff[]>([])
+const handleSelectionChange = (rows: IStaff[]) => {
+  selectRows.value = JSON.parse(JSON.stringify(rows))
+}
+
+// 分页查询
+const pageQuery = (searchData: HashMap, success: any) => {
+  staffs.pageQuery(searchData).then(res => {
     const result: IPageResult<IStaff> = res.data.data
-    records.value = result.records
-    total.value = result.total
-    current.value = result.current
-    size.value = result.size
-    flag.value = false
+    success(result)
   })
-}
-
-const handleSizeChange = (val: number) => {
-  searchData.current = 1
-  searchData.size = val
-  flag.value = true
-  pageQuery(searchData)
-}
-const handleCurrentChange = (val: number) => {
-  if (flag.value) {
-    return
-  }
-  searchData.current = val
-  searchData.size = size.value
-  pageQuery(searchData)
-}
-
-// 筛选全部
-const filterAll = (conditions: unknown) => {
-  const filters = JSON.parse(JSON.stringify(conditions))
-  if (_.isEmpty(filters)) {
-    _.forEach(Reflect.ownKeys(searchData), key => {
-      Reflect.deleteProperty(searchData, key)
-    })
-  } else {
-    _.forEach(Reflect.ownKeys(filters), key => {
-      if (filters[key]) {
-        searchData[key.toString()] = filters[key]
-      } else {
-        Reflect.deleteProperty(searchData, key)
-      }
-    })
-  }
-  searchData.current = 1
-  searchData.size = size.value
-  return pageQuery(searchData)
-}
-
-// 筛选性别
-const filterSex = (
-  value: string,
-  row: { [propName: string]: unknown },
-  column: TableColumnCtx<{ [propName: string]: unknown }>
-) => {
-  // 筛选当页数据
-  const property = column.property
-  return row[property] === value
 }
 
 // 格式化列
-const formatterSex = (row: { sex: string; }) => {
+const formatterSex = (row: IStaff, column: TableColumnCtx<IStaff>) => {
   return row.sex === 'M' ? '男' : '女'
 }
 
-// 搜索表单
+// 表头按钮组
+const tableButtons = Object.freeze([
+  {
+    text: '刷新',
+    type: 'primary',
+    icon: 'CirclePlus',
+    click: () => {
+      refreshTable()
+    }
+  },
+  {
+    text: '办理入职',
+    type: 'primary',
+    icon: 'CirclePlus',
+    click: () => {
+      dialogFormVisible.value = true
+      refreshTable()
+    }
+  },
+  {
+    text: '办理离职',
+    type: 'primary',
+    icon: 'Delete',
+    click: () => {
+      if (_.isEmpty(selectRows.value) || selectRows.value.length > 1) {
+        ElMessageBox.alert('请选择一条数据', '温馨提示')
+        return
+      }
+      // const ids = selectRows.value.map(({ staffId }) => staffId)
+      ElMessageBox.alert(JSON.stringify(selectRows.value), '办理离职')
+      refreshTable()
+    }
+  },
+  {
+    text: '更多操作',
+    children: [
+      {
+        text: '上移',
+        icon: 'el-icon-arrow-up',
+        click: () => {
+          if (_.isEmpty(selectRows.value)) {
+            ElMessageBox.alert('请至少选择一条数据', '温馨提示')
+            return
+          }
+          console.log('上移')
+          refreshTable()
+        }
+      },
+      {
+        text: '下移',
+        icon: 'el-icon-arrow-down',
+        click: () => {
+          if (_.isEmpty(selectRows.value)) {
+            ElMessageBox.alert('请至少选择一条数据', '温馨提示')
+            return
+          }
+          console.log('下移')
+          refreshTable()
+        }
+      }
+    ]
+  }
+])
+
+// 操作列按钮
+const handleView = (row: IStaff) => {
+  ElMessageBox.alert(JSON.stringify(row), '查看员工信息')
+}
+const handleModify = (row: IStaff) => {
+  ElMessageBox.alert(JSON.stringify(row), '修改员工信息')
+}
+const becomeRegularStaff = (row: IStaff) => {
+  ElMessageBox.alert(JSON.stringify(row), '办理转正')
+}
+const handleDismiss = (row: IStaff) => {
+  ElMessageBox.alert(JSON.stringify(row), '办理离职')
+}
+
+// 表格列配置
+const tableColumns: Array<ITableColumn> = [
+  {
+    type: 'selection'
+  },
+  {
+    prop: 'staffNumber',
+    columnKey: 'staffNumber',
+    label: '工号',
+    minWidth: 100,
+    fixed: 'left'
+  },
+  {
+    prop: 'name',
+    columnKey: 'name',
+    label: '姓名',
+    minWidth: 100,
+    fixed: 'left'
+  },
+  {
+    prop: 'sex',
+    columnKey: 'sex',
+    label: '性别',
+    minWidth: 100,
+    formatter: formatterSex
+  },
+  {
+    prop: 'birthday',
+    label: '出生日期'
+  },
+  {
+    prop: 'idcard',
+    columnKey: 'idcard',
+    label: '身份证号',
+    minWidth: 180
+  },
+  {
+    prop: 'mobile',
+    label: '手机号码'
+  },
+  {
+    prop: 'email',
+    label: '电子邮箱',
+    minWidth: 200
+  },
+  {
+    prop: 'orgName',
+    columnKey: 'orgName',
+    label: '所属组织',
+    minWidth: 250
+  },
+  {
+    type: 'slot',
+    slot: 'action'
+  }
+]
+
+// 搜索表单配置
 const formItems: FormItem[] = [
   {
     type: 'text',
     prop: 'staffNumber',
     label: '工号',
     placeholder: '请输入工号'
+  },
+  {
+    type: 'text',
+    prop: 'name',
+    label: '姓名',
+    placeholder: '请输入姓名'
   },
   {
     type: 'select',
@@ -147,20 +234,59 @@ const formItems: FormItem[] = [
       { text: '全部', value: '' },
       { text: '男', value: 'M' },
       { text: '女', value: 'F' }
-    ]
+    ],
+    hidden: true
+  },
+  {
+    type: 'text',
+    prop: 'idcard',
+    label: '身份证号',
+    placeholder: '请输入身份证号',
+    hidden: true
+  },
+  {
+    type: 'text',
+    prop: 'orgName',
+    label: '所属组织',
+    placeholder: '请输入所属组织',
+    hidden: true
   }
 ]
+
+// 搜索表单数据
 const formData: HashMap = reactive({})
-const submitForm = (data: { [propName: string]: unknown }) => {
-  filterAll(data)
-}
-const resetForm = (data: { [propName: string]: unknown }) => {
-  filterAll(data)
+
+// TODO: 给行添加样式，此处有BUG，固定列颜色没有同步
+const tableRowClassName = ({ row, rowIndex }: { row: IStaff, rowIndex: number }) => {
+  console.log(rowIndex)
+  if (row.sex === 'M') {
+    return 'warning-row'
+  } else {
+    return 'success-row'
+  }
 }
 
-// 初始化表格
-pageQuery(searchData)
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
+
+const form = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: ''
+})
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.el-table .warning-row {
+  --el-table-tr-bg-color: #409eff;
+}
+
+.el-table .success-row {
+  --el-table-tr-bg-color: #e6a23c;
+}
 </style>
