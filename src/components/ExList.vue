@@ -67,16 +67,16 @@ import { useStore } from 'vuex'
 import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { getBoundingClientRect } from '@/utils/dom.util'
-import { HashMap, ITableColumn, IPageQueryData, IPageResult, FormItem } from '@/types'
+import { HashMap, TableColumn, PagingQueryBody, PagingResult, FormItem } from '@/types'
 import ExForm from '@/components/ExForm.vue'
 
 const store = useStore()
 
 const refreshTable = () => {
   console.log('刷新表格')
-  searchData.current = 1
+  pagingQueryBody.current = 1
   flag.value = true
-  pageQuery(searchData)
+  pageQuery(pagingQueryBody)
 }
 // 对外暴露属性或者方法
 defineExpose({
@@ -107,7 +107,7 @@ const props = defineProps({
     type: Array as () => Array<any>
   },
   tableColumns: {
-    type: Array as () => Array<ITableColumn>
+    type: Array as () => Array<TableColumn>
   },
   tableBorder: {
     type: Boolean
@@ -128,7 +128,7 @@ const emit = defineEmits(['pageQuery', 'handleSelectionChange'])
 
 const locale = ref(zhCn)
 
-const reservedHeight = 65
+const reservedHeight = 60
 const tableRef = ref()
 const tableHeight = ref(250)
 const paginationRef = ref()
@@ -136,17 +136,17 @@ const records = ref<any[]>([])
 const total = ref(1)
 const current = ref(props.tablePageCurrent || 1)
 const size = ref(props.tablePageSize || 20)
-const searchData = reactive<IPageQueryData>({ current: current.value, size: size.value })
+const pagingQueryBody = reactive<PagingQueryBody>({ current: current.value, size: size.value })
 const flag = ref(false)
 
 // 初始化默认筛选条件
 _.forEach(Reflect.ownKeys(props.formData), key => {
-  searchData[key.toString()] = props.formData[key.toString()]
+  pagingQueryBody[key.toString()] = props.formData[key.toString()]
 })
 
 // 分页查询
-const pageQuery = (searchData: IPageQueryData) => {
-  emit('pageQuery', JSON.parse(JSON.stringify(searchData)), (result: IPageResult<any>) => {
+const pageQuery = (pagingQueryBody: PagingQueryBody) => {
+  emit('pageQuery', JSON.parse(JSON.stringify(pagingQueryBody)), (result: PagingResult<any>) => {
     records.value = result.records
     total.value = result.total
     current.value = result.current
@@ -157,40 +157,40 @@ const pageQuery = (searchData: IPageQueryData) => {
 
 // 改变页大小
 const handleSizeChange = (val: number) => {
-  searchData.current = 1
-  searchData.size = val
+  pagingQueryBody.current = 1
+  pagingQueryBody.size = val
   flag.value = true
-  pageQuery(searchData)
+  pageQuery(pagingQueryBody)
 }
 // 改变页码
 const handleCurrentChange = (val: number) => {
   if (flag.value) {
     return
   }
-  searchData.current = val
-  searchData.size = size.value
-  pageQuery(searchData)
+  pagingQueryBody.current = val
+  pagingQueryBody.size = size.value
+  pageQuery(pagingQueryBody)
 }
 
 // 筛选数据
 const handleFilterChange = (filterConditions: unknown) => {
   const filters = JSON.parse(JSON.stringify(filterConditions))
   if (_.isEmpty(filters)) {
-    _.forEach(Reflect.ownKeys(searchData), key => {
-      Reflect.deleteProperty(searchData, key)
+    _.forEach(Reflect.ownKeys(pagingQueryBody), key => {
+      Reflect.deleteProperty(pagingQueryBody, key)
     })
   } else {
     _.forEach(Reflect.ownKeys(filters), key => {
       if (filters[key]) {
-        searchData[key.toString()] = filters[key]
+        pagingQueryBody[key.toString()] = filters[key]
       } else {
-        Reflect.deleteProperty(searchData, key)
+        Reflect.deleteProperty(pagingQueryBody, key)
       }
     })
   }
-  searchData.current = 1
-  searchData.size = size.value
-  return pageQuery(searchData)
+  pagingQueryBody.current = 1
+  pagingQueryBody.size = size.value
+  return pageQuery(pagingQueryBody)
 }
 
 // 选中行
@@ -235,7 +235,7 @@ watch(() => store.state.isExpandFormItem, () => {
 })
 
 // 初始化表格
-pageQuery(searchData)
+pageQuery(pagingQueryBody)
 </script>
 
 <style scoped lang="scss">

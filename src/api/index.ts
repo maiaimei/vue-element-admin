@@ -2,8 +2,8 @@ import { HashMap } from '@/types'
 import $axios from '@/utils/axios.util'
 
 export const staffs = {
-  pageQuery: async (searchData: HashMap) => {
-    return await $axios.post('/api/staffs', searchData)
+  pageQuery: async (pagingQueryBody: HashMap) => {
+    return await $axios.post('/api/staffs', pagingQueryBody)
   }
 }
 

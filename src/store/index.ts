@@ -1,12 +1,18 @@
-import { MenuItem } from '@/types'
+import { TabItem } from '@/types'
 import { createStore } from 'vuex'
 
 export default createStore({
   state: {
     breadcrumbs: [],
     isExpandFormItem: false,
-    activeTab: '1',
-    openTabs: [] as Array<{ id: string, title: string, path: string }>
+    activeTab: 'HomeView',
+    openTabs: [
+      {
+        name: 'HomeView',
+        title: '首页',
+        path: '/'
+      }
+    ] as Array<TabItem>
   },
   getters: {
   },
@@ -17,21 +23,21 @@ export default createStore({
     UPDATEISEXPANDFORMITEM(state) {
       state.isExpandFormItem = !state.isExpandFormItem
     },
-    ADDOPENTABS(state, payload: { id: string, title: string, path: string }) {
-      state.activeTab = payload.id
+    ADDOPENTABS(state, payload: TabItem) {
+      state.activeTab = payload.name
       const haveFlag = state.openTabs.some(item => {
-        return item.id === payload.id
+        return item.name === payload.name
       })
       if (!haveFlag) {
         state.openTabs.push(payload)
       }
     },
-    UPDATEOPENTABS(state, payload: Array<{ id: string, title: string, path: string }>) {
+    UPDATEOPENTABS(state, payload: Array<TabItem>) {
       state.openTabs = payload
     },
     DELETEOPENTABS(state, payload: string) {
       state.openTabs = state.openTabs.filter((item) => {
-        return item.id !== payload
+        return item.name !== payload
       })
     },
     UPDATEACTIVETAB(state, payload: string) {

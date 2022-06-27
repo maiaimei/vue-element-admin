@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Mock from 'mockjs'
-import { IResult, IPageResult, IPageQueryData } from '@/types'
+import { Result, PagingResult, PagingQueryBody } from '@/types'
 
 export interface IStaff {
   staffId: number,
@@ -34,17 +34,17 @@ for (let i = 1; i <= 303; i++) {
 }
 
 Mock.mock('/api/staffs', 'post', (options: { body: string }) => {
-  const jsonData: IPageQueryData = JSON.parse(options.body)
+  const jsonData: PagingQueryBody = JSON.parse(options.body)
   const current = jsonData.current
   const size = jsonData.size
   Reflect.deleteProperty(jsonData, 'current')
   Reflect.deleteProperty(jsonData, 'size')
-  const searchData = jsonData
+  const pagingQueryBody = jsonData
   let records
-  if (Object.keys(searchData).length === 0) {
+  if (Object.keys(pagingQueryBody).length === 0) {
     records = _.cloneDeep(staffs)
   } else {
-    records = _.filter(staffs, searchData)
+    records = _.filter(staffs, pagingQueryBody)
   }
 
   return {
@@ -56,5 +56,5 @@ Mock.mock('/api/staffs', 'post', (options: { body: string }) => {
       current: current,
       size: size
     }
-  } as IResult<IPageResult<IStaff>>
+  } as Result<PagingResult<IStaff>>
 })

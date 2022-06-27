@@ -39,6 +39,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: '表单页', keepAlive: true }
       },
       {
+        path: 'menu',
+        name: 'MenuView',
+        component: () => import('@/views/MenuView.vue'),
+        meta: { title: '菜单管理', keepAlive: true }
+      },
+      {
         path: 'error',
         name: 'ErrorView',
         component: () => import('@/views/error/ErrorView.vue'),

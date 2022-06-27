@@ -2,39 +2,38 @@ export interface HashMap {
   [propName: string]: unknown
 }
 
-export interface IResult<T> {
+export interface Result<T> {
   code: number,
   message: string | null,
   data: T | null
 }
 
-export interface IPageResult<T> {
+export interface PagingResult<T> {
   records: Array<T>,
   total: number,
   current: number,
   size: number
 }
 
-export interface IPageQueryData {
+export interface PagingQueryBody {
   current: number,
   size: number,
   [propName: string]: unknown
 }
 
+export interface TabItem {
+  name: string,
+  title: string,
+  path: string
+}
+
 export interface MenuItem {
-  id: string,
+  name: string,
   title: string,
   path: string,
   icon?: string,
   children?: Array<MenuItem>
 }
-
-// select, checkobx, radio 的 option
-// export interface ChooseOption {
-//   value: string,
-//   text: string
-// }
-
 export interface FormItem {
   label?: string,
   cols?: Array<{
@@ -67,7 +66,7 @@ export interface FormItem {
   hidden?: boolean
 }
 
-export interface ITableColumn {
+export interface TableColumn {
   type?: string,
   slot?: string,
   fixed?: string | boolean,

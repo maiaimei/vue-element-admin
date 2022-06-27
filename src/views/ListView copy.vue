@@ -32,7 +32,7 @@ import { TableColumnCtx } from 'element-plus/lib/components/table/src/table-colu
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { getBoundingClientRect } from '@/utils/dom.util'
 import { staffs } from '@/api'
-import { HashMap, IPageQueryData, FormItem, IPageResult } from '@/types'
+import { HashMap, PagingQueryBody, FormItem, PagingResult } from '@/types'
 import ExForm from '@/components/ExForm.vue'
 import { IStaff } from '@/mock/staff'
 
@@ -46,7 +46,7 @@ const records = ref<IStaff[]>([])
 const total = ref(1)
 const current = ref(1)
 const size = ref(20)
-const searchData = reactive<IPageQueryData>({ current: current.value, size: size.value })
+const pagingQueryBody = reactive<PagingQueryBody>({ current: current.value, size: size.value })
 const flag = ref(false)
 
 async function computeTableHeight() {
@@ -67,9 +67,9 @@ onMounted(() => {
   })
 })
 
-const pageQuery = (searchData: IPageQueryData) => {
-  staffs.pageQuery(JSON.parse(JSON.stringify(searchData))).then(res => {
-    const result: IPageResult<IStaff> = res.data.data
+const pageQuery = (pagingQueryBody: PagingQueryBody) => {
+  staffs.pageQuery(JSON.parse(JSON.stringify(pagingQueryBody))).then(res => {
+    const result: PagingResult<IStaff> = res.data.data
     records.value = result.records
     total.value = result.total
     current.value = result.current
@@ -79,39 +79,39 @@ const pageQuery = (searchData: IPageQueryData) => {
 }
 
 const handleSizeChange = (val: number) => {
-  searchData.current = 1
-  searchData.size = val
+  pagingQueryBody.current = 1
+  pagingQueryBody.size = val
   flag.value = true
-  pageQuery(searchData)
+  pageQuery(pagingQueryBody)
 }
 const handleCurrentChange = (val: number) => {
   if (flag.value) {
     return
   }
-  searchData.current = val
-  searchData.size = size.value
-  pageQuery(searchData)
+  pagingQueryBody.current = val
+  pagingQueryBody.size = size.value
+  pageQuery(pagingQueryBody)
 }
 
 // 筛选全部
 const filterAll = (conditions: unknown) => {
   const filters = JSON.parse(JSON.stringify(conditions))
   if (_.isEmpty(filters)) {
-    _.forEach(Reflect.ownKeys(searchData), key => {
-      Reflect.deleteProperty(searchData, key)
+    _.forEach(Reflect.ownKeys(pagingQueryBody), key => {
+      Reflect.deleteProperty(pagingQueryBody, key)
     })
   } else {
     _.forEach(Reflect.ownKeys(filters), key => {
       if (filters[key]) {
-        searchData[key.toString()] = filters[key]
+        pagingQueryBody[key.toString()] = filters[key]
       } else {
-        Reflect.deleteProperty(searchData, key)
+        Reflect.deleteProperty(pagingQueryBody, key)
       }
     })
   }
-  searchData.current = 1
-  searchData.size = size.value
-  return pageQuery(searchData)
+  pagingQueryBody.current = 1
+  pagingQueryBody.size = size.value
+  return pageQuery(pagingQueryBody)
 }
 
 // 筛选性别
@@ -159,7 +159,7 @@ const resetForm = (data: { [propName: string]: unknown }) => {
 }
 
 // 初始化表格
-pageQuery(searchData)
+pageQuery(pagingQueryBody)
 </script>
 
 <style scoped lang="scss">

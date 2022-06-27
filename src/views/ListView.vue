@@ -43,7 +43,7 @@ import _ from 'lodash'
 import { reactive, ref, getCurrentInstance, onMounted } from 'vue'
 import { TableColumnCtx } from 'element-plus/lib/components/table/src/table-column/defaults'
 import { ElMessageBox } from 'element-plus'
-import { HashMap, ITableColumn, IPageResult, FormItem } from '@/types'
+import { HashMap, TableColumn, PagingResult, FormItem } from '@/types'
 import { IStaff } from '@/mock/staff'
 import { staffs } from '@/api'
 
@@ -64,9 +64,9 @@ const handleSelectionChange = (rows: IStaff[]) => {
 }
 
 // 分页查询
-const pageQuery = (searchData: HashMap, success: any) => {
-  staffs.pageQuery(searchData).then(res => {
-    const result: IPageResult<IStaff> = res.data.data
+const pageQuery = (pagingQueryBody: HashMap, success: any) => {
+  staffs.pageQuery(pagingQueryBody).then(res => {
+    const result: PagingResult<IStaff> = res.data.data
     success(result)
   })
 }
@@ -155,7 +155,7 @@ const handleDismiss = (row: IStaff) => {
 }
 
 // 表格列配置
-const tableColumns: Array<ITableColumn> = [
+const tableColumns: Array<TableColumn> = [
   {
     type: 'selection'
   },
