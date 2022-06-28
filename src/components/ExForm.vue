@@ -1,20 +1,10 @@
 <template>
   <el-form ref="formRef" :model="formData" :label-width="labelWidth + 'px'" :inline="isSearchForm">
     <template v-for="(item, index) of formItems" :key="index">
-      <template v-if="item.type == 'cols'">
-        <el-form-item :label="item.label"
-          :class="{ 'hidden': item.hidden && !isExpand, 'default-hidden': item.hidden !== undefined }">
-          <template v-for="(col, colIndex) of item.cols" :key="colIndex">
-            <el-col v-if="col.html" :span="col.span" :class="col.class" v-html="col.html"></el-col>
-            <el-col v-else :span="col.span" :class="col.class">
-              <el-form-item v-for="(colItem, colIdx) of col.items" :key="colIdx" :prop="colItem.prop"
-                :rules="colItem.rules">
-                <ex-form-element :item="colItem" :model="formData"></ex-form-element>
-              </el-form-item>
-            </el-col>
-          </template>
-        </el-form-item>
-      </template>
+      <!-- 自定义内容 -->
+      <slot v-if="item.elType === 'slot'" :name="item.slot">
+      </slot>
+      <!-- 常规表单项 -->
       <template v-else>
         <el-form-item :label="item.label" :prop="item.prop" :rules="item.rules"
           :class="{ 'hidden': item.hidden && !isExpand, 'default-hidden': item.hidden !== undefined }">
@@ -23,8 +13,9 @@
       </template>
     </template>
     <el-form-item>
-      <el-button @click="submitForm(formRef)" type="primary" v-if="isSearchForm">查询</el-button>
-      <el-button @click="submitForm(formRef)" type="primary" v-if="!isSearchForm">提交</el-button>
+      <el-button @click="submitForm(formRef)" type="primary">
+        {{ isSearchForm ? "查询" : "提交" }}
+      </el-button>
       <el-button @click="resetForm(formRef)">重置</el-button>
       <el-link v-if="isSearchForm" :icon="isExpand ? ArrowUpBold : ArrowDownBold" :underline="false"
         style="margin-left:10px;" @click="expandFormItem">{{ isExpand ? '收起' : '展开' }}</el-link>
@@ -37,7 +28,7 @@ import { reactive, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
 import type { FormInstance } from 'element-plus'
-import { FormItem } from '@/types'
+import { HashMap, FormItem } from '@/types'
 import ExFormElement from '@/components/ExFormElement.vue'
 
 const store = useStore()
@@ -59,8 +50,7 @@ const props = defineProps({
   // },
   // 表单提交数据
   formData: {
-    // [propName: string]: unknown 表示任意类型的属性
-    type: Object as () => { [propName: string]: unknown },
+    type: Object as () => HashMap,
     default: function () {
       return {}
     }

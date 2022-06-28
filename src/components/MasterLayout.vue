@@ -53,19 +53,19 @@
           </div>
           <div class="clear"></div>
         </el-header>
-        <el-scrollbar class="main-container">
-          <el-main>
-            <el-tabs type="card" v-model="activeTab" @tab-click="clickTab" @tab-remove="removeTab" closable>
-              <el-tab-pane v-for="item in openTabs" :key="item.name" :name="item.name" :label="item.title">
-              </el-tab-pane>
-            </el-tabs>
+        <el-main>
+          <el-tabs type="card" v-model="activeTab" @tab-click="clickTab" @tab-remove="removeTab" closable>
+            <el-tab-pane v-for="item in openTabs" :key="item.name" :name="item.name" :label="item.title">
+            </el-tab-pane>
+          </el-tabs>
+          <el-scrollbar class="main-container">
             <router-view v-slot="{ Component }">
               <keep-alive>
                 <component :is="Component" />
               </keep-alive>
             </router-view>
-          </el-main>
-        </el-scrollbar>
+          </el-scrollbar>
+        </el-main>
       </el-container>
     </el-container>
   </el-scrollbar>

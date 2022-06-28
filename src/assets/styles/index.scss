@@ -120,6 +120,7 @@ body {
 }
 
 .el-select,
+.el-cascader,
 .el-date-editor.el-input,
 .el-date-editor.el-input__wrapper,
 .el-input-number {
@@ -158,7 +159,11 @@ body {
     display: none;
 }
 
-.menu-container,
-.main-container {
+.menu-container {
     height: calc(100vh - $header-height);
+}
+
+.main-container {
+    height: calc(100vh - $header-height - 80px);
+    padding-right: 15px;
 }

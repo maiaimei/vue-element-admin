@@ -1,4 +1,5 @@
 export interface HashMap {
+  // 表示任意类型的属性
   [propName: string]: unknown
 }
 
@@ -35,35 +36,13 @@ export interface MenuItem {
   children?: Array<MenuItem>
 }
 export interface FormItem {
+  elType: string,
+  slot?: string,
+  prop?: string,
   label?: string,
-  cols?: Array<{
-    span: number,
-    items?: Array<FormItem>,
-    html?: string,
-    class?: string
-  }>,
   rules?: FormRules,
-  type: string,
-  prop: string,
-  subType?: string,
-  min?: number,
-  max?: number,
-  minTime?: string,
-  maxTime?: string,
-  start?: string,
-  end?: string,
-  step?: string,
-  format?: string,
-  valueFormat?: string,
-  multiple?: boolean,
-  options?: Array<{ text: unknown, value: unknown }>, // Array<ChooseOption>,
-  filterable?: boolean,
-  disabled?: boolean,
-  action?: string,
-  tip?: string,
-  placeholder?: string,
-  handleChange?: (value: number) => { /** */ },
-  hidden?: boolean
+  options?: Array<{ text: unknown, value: unknown }>,
+  [propName: string]: unknown
 }
 
 export interface TableColumn {

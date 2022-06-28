@@ -81,7 +81,7 @@ const tableButtons = Object.freeze([
   {
     text: '刷新',
     type: 'primary',
-    icon: 'CirclePlus',
+    icon: 'Refresh',
     click: () => {
       refreshTable()
     }
@@ -214,19 +214,19 @@ const tableColumns: Array<TableColumn> = [
 // 搜索表单配置
 const formItems: FormItem[] = [
   {
-    type: 'text',
+    elType: 'text',
     prop: 'staffNumber',
     label: '工号',
     placeholder: '请输入工号'
   },
   {
-    type: 'text',
+    elType: 'text',
     prop: 'name',
     label: '姓名',
     placeholder: '请输入姓名'
   },
   {
-    type: 'select',
+    elType: 'select',
     prop: 'sex',
     label: '性别',
     placeholder: '全部',
@@ -238,14 +238,14 @@ const formItems: FormItem[] = [
     hidden: true
   },
   {
-    type: 'text',
+    elType: 'text',
     prop: 'idcard',
     label: '身份证号',
     placeholder: '请输入身份证号',
     hidden: true
   },
   {
-    type: 'text',
+    elType: 'text',
     prop: 'orgName',
     label: '所属组织',
     placeholder: '请输入所属组织',

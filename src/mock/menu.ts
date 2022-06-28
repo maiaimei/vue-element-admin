@@ -3,23 +3,23 @@ import { Result, MenuItem } from '@/types'
 
 const menus: Array<MenuItem> = [
   {
-    name: 'MenuView',
-    title: '菜单管理',
-    path: '/menu'
+    name: 'TreeView',
+    title: '树形页面',
+    path: '/tree'
   },
   {
     name: 'ListView',
-    title: '列表页',
+    title: '列表页面',
     path: '/list'
   },
   {
     name: 'FormView',
-    title: '表单页',
+    title: '表单页面',
     path: '/form'
   },
   {
     name: '4',
-    title: '错误页',
+    title: '异常页面',
     path: 'error',
     children: [
       {

@@ -3,30 +3,7 @@
   <ex-form :isSearchForm="true" :labelWidth="formLabelWidth" :formItems="formItems" :formData="formData"
     @submitForm="submitForm" @resetForm="resetForm" />
   <!-- 操作按钮 -->
-  <el-button-group>
-    <template v-for="(button, index) in tableButtons">
-      <el-button v-if="!button.children" :key="index + 'button'" :type="button.type" :icon="button.icon"
-        @click="button.click">
-        {{ button.text }}
-      </el-button>
-      <el-dropdown v-else :key="index + 'dropdown-button'">
-        <el-button :type="button.type">
-          {{ button.text }}
-          <el-icon class="el-icon--right">
-            <arrow-down />
-          </el-icon>
-        </el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-for="(childButton, childIndex) in button.children" :key="childIndex"
-              @click="childButton.click">
-              {{ childButton.text }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </template>
-  </el-button-group>
+  <ex-toolbar :buttons="tableButtons"></ex-toolbar>
   <!-- 表格 -->
   <el-config-provider :locale="locale">
     <el-table ref="tableRef" :data="records" style="width: 100%" :height="tableHeight"
@@ -64,24 +41,14 @@
 import _ from 'lodash'
 import { reactive, ref, unref, nextTick, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { Delete, Edit, CirclePlus } from '@element-plus/icons-vue'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { getBoundingClientRect } from '@/utils/dom.util'
 import { HashMap, TableColumn, PagingQueryBody, PagingResult, FormItem } from '@/types'
 import ExForm from '@/components/ExForm.vue'
+import ExToolbar from './ExToolbar.vue'
 
+const locale = ref(zhCn)
 const store = useStore()
-
-const refreshTable = () => {
-  console.log('刷新表格')
-  pagingQueryBody.current = 1
-  flag.value = true
-  pageQuery(pagingQueryBody)
-}
-// 对外暴露属性或者方法
-defineExpose({
-  refreshTable
-})
 
 // 接收父组件传递的属性
 const props = defineProps({
@@ -126,18 +93,28 @@ const props = defineProps({
 // 接收父组件传递的方法
 const emit = defineEmits(['pageQuery', 'handleSelectionChange'])
 
-const locale = ref(zhCn)
+const refreshTable = () => {
+  pagingQueryBody.current = 1
+  isChangeSize.value = true
+  pageQuery(pagingQueryBody)
+}
+// 对外暴露属性或者方法
+defineExpose({
+  refreshTable
+})
 
 const reservedHeight = 60
-const tableRef = ref()
 const tableHeight = ref(250)
+const tableRef = ref()
 const paginationRef = ref()
+
 const records = ref<any[]>([])
 const total = ref(1)
 const current = ref(props.tablePageCurrent || 1)
 const size = ref(props.tablePageSize || 20)
+
 const pagingQueryBody = reactive<PagingQueryBody>({ current: current.value, size: size.value })
-const flag = ref(false)
+const isChangeSize = ref(false)
 
 // 初始化默认筛选条件
 _.forEach(Reflect.ownKeys(props.formData), key => {
@@ -151,25 +128,8 @@ const pageQuery = (pagingQueryBody: PagingQueryBody) => {
     total.value = result.total
     current.value = result.current
     size.value = result.size
-    flag.value = false
+    isChangeSize.value = false
   })
-}
-
-// 改变页大小
-const handleSizeChange = (val: number) => {
-  pagingQueryBody.current = 1
-  pagingQueryBody.size = val
-  flag.value = true
-  pageQuery(pagingQueryBody)
-}
-// 改变页码
-const handleCurrentChange = (val: number) => {
-  if (flag.value) {
-    return
-  }
-  pagingQueryBody.current = val
-  pagingQueryBody.size = size.value
-  pageQuery(pagingQueryBody)
 }
 
 // 筛选数据
@@ -193,6 +153,23 @@ const handleFilterChange = (filterConditions: unknown) => {
   return pageQuery(pagingQueryBody)
 }
 
+// 改变页码
+const handleSizeChange = (val: number) => {
+  pagingQueryBody.current = 1
+  pagingQueryBody.size = val
+  isChangeSize.value = true
+  pageQuery(pagingQueryBody)
+}
+// 改变页码
+const handleCurrentChange = (val: number) => {
+  if (isChangeSize.value) {
+    return
+  }
+  pagingQueryBody.current = val
+  pagingQueryBody.size = size.value
+  pageQuery(pagingQueryBody)
+}
+
 // 选中行
 const multipleSelection = ref<any[]>([])
 const handleSelectionChange = (val: any[]) => {
@@ -209,6 +186,7 @@ const resetForm = (data: HashMap) => {
   handleFilterChange(data)
 }
 
+// 表格高度自适应
 async function computeTableHeight() {
   const tableProxy = unref(tableRef)
   const tableEle = tableProxy?.$el as Element
@@ -220,8 +198,6 @@ async function computeTableHeight() {
     tableHeight.value = window.innerHeight - tableRect.top - reservedHeight
   }
 }
-
-// 表格高度自适应
 onMounted(() => {
   // nextTick 将回调推迟到下一个 DOM 更新周期之后执行
   nextTick(() => {

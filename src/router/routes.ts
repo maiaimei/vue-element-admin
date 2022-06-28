@@ -30,19 +30,19 @@ const routes: Array<RouteRecordRaw> = [
         path: 'list',
         name: 'ListView',
         component: () => import('@/views/ListView.vue'),
-        meta: { title: '列表页', keepAlive: true }
+        meta: { title: '列表页面', keepAlive: true }
       },
       {
         path: 'form',
         name: 'FormView',
         component: () => import('@/views/FormView.vue'),
-        meta: { title: '表单页', keepAlive: true }
+        meta: { title: '表单页面', keepAlive: true }
       },
       {
-        path: 'menu',
-        name: 'MenuView',
-        component: () => import('@/views/MenuView.vue'),
-        meta: { title: '菜单管理', keepAlive: true }
+        path: 'tree',
+        name: 'TreeView',
+        component: () => import('@/views/TreeView.vue'),
+        meta: { title: '树形页面', keepAlive: true }
       },
       {
         path: 'error',
