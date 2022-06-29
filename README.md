@@ -28,6 +28,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 [https://element-plus.gitee.io/zh-CN/](https://element-plus.gitee.io/zh-CN/)
 
-[http://mockjs.com/](http://mockjs.com/)
+[https://echarts.apache.org/handbook/zh/get-started](https://echarts.apache.org/handbook/zh/get-started)
 
-[http://mockjs.com/examples.html](http://mockjs.com/examples.html)
+[http://mockjs.com/](http://mockjs.com/)

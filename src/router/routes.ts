@@ -45,6 +45,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: '树形页面', keepAlive: true }
       },
       {
+        path: 'chart',
+        name: 'ChartView',
+        component: () => import('@/views/ChartView.vue'),
+        meta: { title: '统计图表', keepAlive: true }
+      },
+      {
         path: 'error',
         name: 'ErrorView',
         component: () => import('@/views/error/ErrorView.vue'),

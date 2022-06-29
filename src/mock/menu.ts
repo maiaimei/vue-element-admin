@@ -3,6 +3,11 @@ import { Result, MenuItem } from '@/types'
 
 const menus: Array<MenuItem> = [
   {
+    name: 'ChartView',
+    title: '统计图表',
+    path: '/chart'
+  },
+  {
     name: 'TreeView',
     title: '树形页面',
     path: '/tree'
