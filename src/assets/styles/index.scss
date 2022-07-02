@@ -55,7 +55,8 @@ body {
         color: $sidebar-menu-text;
 
         &:hover,
-        &:focus {
+        &:focus,
+        &.is-active {
             background-color: $sidebar-menu-active-bg;
         }
     }
@@ -165,5 +166,4 @@ body {
 
 .main-container {
     height: calc(100vh - $header-height - 80px);
-    padding-right: 15px;
 }

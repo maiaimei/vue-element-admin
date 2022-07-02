@@ -83,13 +83,20 @@ import { TabItem } from '@/types'
 const store = useStore()
 const router = useRouter()
 
-const activeMenu = ref<string>(router.currentRoute.value.path)
 const isCollapseSidebar = ref<boolean>(false)
 const fullscreen = ref<boolean>(false)
 const drawer = ref<boolean>(false)
 
-// 从 vuex 中读取 breadcrumbs
 const breadcrumbs = computed(() => store.state.breadcrumbs)
+
+const activeMenu = computed({
+  get() {
+    return store.state.activeMenu
+  },
+  set(value) {
+    store.commit('UPDATEACTIVEMENU', value)
+  }
+})
 
 // 获取面包屑
 const initBreadcrumbs = () => {
@@ -117,10 +124,19 @@ const initActiveTab = () => {
   }
 }
 
+const updateActiveMenu = () => {
+  const matched: RouteLocationMatched[] = router.currentRoute.value.matched
+  const item = matched[matched.length - 1]
+  if (item.name !== 'HomeView') {
+    activeMenu.value = item.path
+  }
+}
+
 // 监听路由
 watch(() => router.currentRoute.value.matched, () => {
   initBreadcrumbs()
   initActiveTab()
+  updateActiveMenu()
 }, { immediate: true, deep: true })
 
 // 切换全屏

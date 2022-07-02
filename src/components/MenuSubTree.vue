@@ -6,23 +6,17 @@
       </template>
       <menu-sub-tree :menus="item.children" />
     </el-sub-menu>
-    <el-menu-item v-else :index="item.path" @click="addTab({ name: item.name, title: item.title, path: item.path })">
+    <el-menu-item v-else :index="item.path">
       <span>{{ item.title }}</span>
     </el-menu-item>
   </template>
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex'
-import { MenuItem, TabItem } from '@/types'
+import { MenuItem } from '@/types'
 defineProps<{
   menus: MenuItem[],
 }>()
-
-const store = useStore()
-const addTab = (item: TabItem) => {
-  store.commit('ADDOPENTABS', item)
-}
 </script>
 
 <style scoped lang="scss">

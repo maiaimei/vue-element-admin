@@ -194,7 +194,6 @@ async function computeTableHeight() {
   const tableProxy = unref(tableRef)
   const tableEle = tableProxy?.$el as Element
   const tableRect = getBoundingClientRect(tableEle) as DOMRect
-  // console.log('tableRect', tableRect)
 
   tableHeight.value = window.innerHeight - tableRect.top - otherHeights
   window.onresize = function () {

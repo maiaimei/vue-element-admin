@@ -15,7 +15,7 @@ const menus: Array<MenuItem> = [
       {
         name: 'DoneView',
         title: '已办事项',
-        path: '/done'
+        path: '#done'
       }
     ]
   },
