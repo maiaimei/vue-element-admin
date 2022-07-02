@@ -34,7 +34,8 @@ export interface MenuItem {
   title: string,
   path: string,
   icon?: string,
-  children?: Array<MenuItem>
+  children?: Array<MenuItem>,
+  hasAuthority?: boolean
 }
 export interface FormItem {
   elType: string,

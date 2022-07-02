@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
-import './menu'
-import './staff'
+import './security'
 import './workitem'
+import './staff'
 
 Mock.setup({
   timeout: '10-100'

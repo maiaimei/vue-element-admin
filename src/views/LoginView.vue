@@ -23,6 +23,9 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { Result } from '@/types'
+import $axios from '@/utils/axios.util'
+import url from 'url'
 
 const router = useRouter()
 
@@ -44,15 +47,28 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) { return }
   await formEl.validate((valid) => {
     if (valid) {
-      if (loginFormData.username === 'admin') {
-        // 登录成功
-        ElMessage.success('登录成功')
-        localStorage.setItem('isAuthenticated', 'true')
-        router.replace('/')
-      } else {
-        // 登录失败
-        ElMessage.error('账号或密码错误')
-      }
+      // if (loginFormData.username === 'admin') {
+      //   // 登录成功
+      //   ElMessage.success('登录成功')
+      //   localStorage.setItem('isAuthenticated', 'true')
+      //   router.replace('/')
+      // } else {
+      //   // 登录失败
+      //   ElMessage.error('账号或密码错误')
+      // }
+      $axios.post('/api/login', loginFormData).then(res => {
+        const result: Result<any> = res.data
+        if (result.data === null) {
+          ElMessage.error(result.message || '账号或密码错误')
+        } else {
+          ElMessage.success('登录成功')
+          localStorage.setItem('isAuthenticated', 'true')
+          localStorage.setItem('user', JSON.stringify(result.data))
+          const req = new URL(window.location.href)
+          const redirectUrl = req.searchParams.get('redirect') || '/'
+          router.replace(redirectUrl)
+        }
+      })
     }
   })
 }

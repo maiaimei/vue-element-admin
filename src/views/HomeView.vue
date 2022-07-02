@@ -117,7 +117,8 @@ import { ref, onMounted } from 'vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import ExChart from '@/components/ExChart.vue'
 
-const nickname = '初冬十月'
+const user = JSON.parse(localStorage.getItem('user') || '')
+const nickname = user.nickname
 const greetingMessage = ref('')
 const getGreeting = () => {
   let greeting: string
@@ -155,13 +156,17 @@ onMounted(() => {
     }
   }, 10000)
 
-  setInterval(() => {
-    ElNotification({
-      title: '待办提醒',
-      message: '您有新的待办事项，请及时处理！',
-      position: 'bottom-right',
-      type: 'warning'
-    })
+  const notificationTimer = setInterval(() => {
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+      ElNotification({
+        title: '待办提醒',
+        message: '您有新的待办事项，请及时处理！',
+        position: 'bottom-right',
+        type: 'warning'
+      })
+    } else {
+      clearInterval(notificationTimer)
+    }
   }, 10000)
 })
 

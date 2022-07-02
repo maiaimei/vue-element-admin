@@ -1,11 +1,10 @@
-import Mock from 'mockjs'
-import { Result, MenuItem } from '@/types'
+import { MenuItem } from '@/types'
 
 const menus: Array<MenuItem> = [
   {
     name: 'workbench',
     title: '工作台',
-    path: 'workbench',
+    path: '#workbench',
     children: [
       {
         name: 'TodoView',
@@ -20,19 +19,41 @@ const menus: Array<MenuItem> = [
     ]
   },
   {
-    name: 'ChartView',
-    title: '统计图表',
-    path: '/chart'
-  },
-  {
-    name: 'TreeView',
-    title: '树形页面',
-    path: '/tree'
+    name: 'systemmanage',
+    title: '系统管理',
+    path: '#systemmanage',
+    children: [
+      {
+        name: 'organization',
+        title: '组织管理',
+        path: '#organization'
+      },
+      {
+        name: 'person',
+        title: '人员管理',
+        path: '#person'
+      },
+      {
+        name: 'role',
+        title: '角色管理',
+        path: '#role'
+      },
+      {
+        name: 'user',
+        title: '用户管理',
+        path: '#user'
+      }
+    ]
   },
   {
     name: 'ListView',
     title: '列表页面',
     path: '/list'
+  },
+  {
+    name: 'TreeView',
+    title: '树形页面',
+    path: '/tree'
   },
   {
     name: 'FormView',
@@ -60,6 +81,11 @@ const menus: Array<MenuItem> = [
         path: '/unauthorized'
       }
     ]
+  },
+  {
+    name: 'ChartView',
+    title: '统计图表',
+    path: '/chart'
   },
   {
     name: '8',
@@ -170,10 +196,4 @@ const menus: Array<MenuItem> = [
   }
 ]
 
-Mock.mock('/api/menus', 'get', () => {
-  return {
-    code: 200,
-    message: null,
-    data: menus
-  } as Result<Array<MenuItem>>
-})
+export default menus

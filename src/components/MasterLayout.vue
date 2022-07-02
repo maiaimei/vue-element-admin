@@ -119,7 +119,7 @@ const initBreadcrumbs = () => {
 const initActiveTab = () => {
   const matched: RouteLocationMatched[] = router.currentRoute.value.matched
   const item = matched[matched.length - 1]
-  if (item.name !== 'HomeView') {
+  if (item.name !== 'HomeView' && item.name !== 'LoginView') {
     store.commit('ADDOPENTABS', { name: item.name, title: item.meta.title, path: item.path })
   }
 }
@@ -162,8 +162,22 @@ const onClickAvatar = (command: string) => {
       )
         .then(() => {
           localStorage.removeItem('isAuthenticated')
+          localStorage.removeItem('user')
           ElMessage.success('注销成功')
           router.replace('/login')
+          openTabs.value = [
+            {
+              name: 'HomeView',
+              title: '首页',
+              path: '/'
+            }
+          ]
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '注销失败'
+          })
         })
       break
     }
