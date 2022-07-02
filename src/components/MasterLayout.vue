@@ -232,8 +232,18 @@ const updateRoute = (activeName: string) => {
   }
 }
 
+const resizeChartTimer = computed({
+  get() {
+    return store.state.resizeChartTimer
+  },
+  set(value) {
+    store.commit('UPDATEISRESIZECHART', value)
+  }
+})
 const toogleSidebar = () => {
   isCollapseSidebar.value = !isCollapseSidebar.value
+  // 收缩/展开侧边栏实时调整图表大小
+  resizeChartTimer.value = new Date().getTime()
 }
 
 </script>

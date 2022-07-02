@@ -3,8 +3,8 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    activeMenu: '',
     breadcrumbs: [],
+    activeMenu: '',
     activeTab: 'HomeView',
     openTabs: [
       {
@@ -12,16 +12,20 @@ export default createStore({
         title: '首页',
         path: '/'
       }
-    ] as Array<TabItem>
+    ] as Array<TabItem>,
+    resizeChartTimer: new Date().getTime()
   },
   getters: {
   },
   mutations: {
-    UPDATEACTIVEMENU(state, value) {
-      state.activeMenu = value
+    UPDATEISRESIZECHART(state, value) {
+      state.resizeChartTimer = value
     },
     UPDATEBREADCRUMBS(state, value) {
       state.breadcrumbs = value
+    },
+    UPDATEACTIVEMENU(state, value) {
+      state.activeMenu = value
     },
     ADDOPENTABS(state, payload: TabItem) {
       state.activeTab = payload.name
