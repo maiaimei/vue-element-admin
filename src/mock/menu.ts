@@ -3,6 +3,23 @@ import { Result, MenuItem } from '@/types'
 
 const menus: Array<MenuItem> = [
   {
+    name: 'workbench',
+    title: '工作台',
+    path: 'workbench',
+    children: [
+      {
+        name: 'TodoView',
+        title: '待办事项',
+        path: '/todo'
+      },
+      {
+        name: 'DoneView',
+        title: '已办事项',
+        path: '/done'
+      }
+    ]
+  },
+  {
     name: 'ChartView',
     title: '统计图表',
     path: '/chart'

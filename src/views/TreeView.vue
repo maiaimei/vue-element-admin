@@ -7,9 +7,9 @@
         </template>
         <el-input v-model="filterText" placeholder="搜索关键字" />
         <el-config-provider :locale="locale">
-          <el-tree ref="treeRef" :data="data" :props="defaultProps" :filter-node-method="filterNode"
-            @node-click="handleNodeClick" @check-change="handleCheckChange" show-checkbox :default-expand-all="true"
-            :expand-on-click-node="false" />
+          <el-tree :key="treeTimer" ref="treeRef" :data="data" :props="defaultProps" :filter-node-method="filterNode"
+            @node-click="handleNodeClick" @check-change="handleCheckChange" show-checkbox
+            :default-expand-all="isExpandAll" :expand-on-click-node="false" />
         </el-config-provider>
       </el-card>
     </el-col>
@@ -24,7 +24,7 @@
           </div>
           <el-alert title="从节点列表选择一项后，进行编辑" type="info" effect="light" show-icon />
         </template>
-        <ex-form v-if="isShowForm" :key="timer" :formItems="formItems" :formData="formData" @submitForm="submitForm">
+        <ex-form v-if="isShowForm" :key="formTimer" :items="formItems" :model="formData" @submitForm="submitForm">
           <template v-slot:id>
             <el-form-item prop="id">
               <ex-form-element :item="customFormItems.id" :model="formData"></ex-form-element>
@@ -48,7 +48,9 @@ import ExToolbar from '@/components/ExToolbar.vue'
 
 const locale = ref(zhCn)
 const treeRef = ref<InstanceType<typeof ElTree>>()
+const isExpandAll = ref(true)
 const isShowForm = ref(false)
+const treeTimer = ref(new Date().getTime())
 
 const buttons = Object.freeze([
   {
@@ -69,10 +71,18 @@ const buttons = Object.freeze([
         text: '删除节点'
       },
       {
-        text: '全部展开'
+        text: '全部展开',
+        click: () => {
+          isExpandAll.value = true
+          treeTimer.value = new Date().getTime()
+        }
       },
       {
-        text: '全部收起'
+        text: '全部收起',
+        click: () => {
+          isExpandAll.value = false
+          treeTimer.value = new Date().getTime()
+        }
       }
     ]
   }
@@ -265,9 +275,9 @@ const customFormItems: { [key: string]: FormItem } = {
   }
 }
 
-const timer = ref(new Date().getTime())
+const formTimer = ref(new Date().getTime())
 const reloadForm = () => {
-  timer.value = new Date().getTime()
+  formTimer.value = new Date().getTime()
 }
 
 const submitForm = (data: { [propName: string]: unknown }) => {

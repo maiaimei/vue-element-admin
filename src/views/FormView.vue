@@ -1,5 +1,5 @@
 <template>
-  <ex-form :key="timer" :formItems="formItems" :formData="formData" :labelWidth="labelWidth" @submitForm="submitForm">
+  <ex-form :key="timer" :items="formItems" :model="formData" :labelWidth="labelWidth" @submitForm="submitForm">
     <template v-slot:cascader>
       <el-form-item label="级联选择器" prop="cascader">
         <el-cascader :options="cascaderOptions" clearable />

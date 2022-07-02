@@ -1,22 +1,20 @@
 <template>
   <!-- :tableRowClassName="tableRowClassName" :tableBorder="true" -->
-  <ex-list ref="testExList" :tableButtons="tableButtons" :tableColumns="tableColumns" :formLabelWidth="100"
+  <ex-list ref="listDemoRef" :tableButtons="tableButtons" :tableColumns="tableColumns" :formLabelWidth="100"
     :formItems="formItems" :formData="formData" @pageQuery="pageQuery" @handleSelectionChange="handleSelectionChange"
-    :tablePageSize="50">
-    <template v-slot:action>
+    :pageSize="50">
+    <!-- <template v-slot:action>
       <el-table-column align="center" label="操作" width="250" class-name="operation" fixed="right">
         <template #default="scope">
           <el-link @click="handleView(scope.row)" :underline="false">查看</el-link>
-          <el-link @click="handleModify(scope.row)" :underline="false">修改</el-link>
-          <el-button @click="becomeRegularStaff(scope.row)" type="primary">转正</el-button>
-          <el-button @click="handleDismiss(scope.row)" type="warning">离职</el-button>
+          <el-button @click="handleModify(scope.row)" type="primary">修改</el-button>
         </template>
       </el-table-column>
-    </template>
+    </template> -->
   </ex-list>
 
   <!-- Form -->
-  <el-dialog v-model="dialogFormVisible" title="Shipping address">
+  <el-dialog v-model="dialogFormVisible" title="Shipping address" draggable>
     <el-form :model="form">
       <el-form-item label="Promotion name" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off" />
@@ -42,9 +40,9 @@ import ExList from '@/components/ExList.vue'
 import _ from 'lodash'
 import { reactive, ref, getCurrentInstance, onMounted } from 'vue'
 import { TableColumnCtx } from 'element-plus/lib/components/table/src/table-column/defaults'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { HashMap, TableColumn, PagingResult, FormItem } from '@/types'
-import { IStaff } from '@/mock/staff'
+import { Staff } from '@/mock/staff'
 import { staffs } from '@/api'
 
 let currentInstance: any
@@ -54,30 +52,30 @@ onMounted(() => {
 
 // 新增、修改、删除、上下移等操作后刷新表格
 const refreshTable = () => {
-  currentInstance.ctx.$refs.testExList.refreshTable()
+  currentInstance.ctx.$refs.listDemoRef.refreshTable()
 }
 
 // 选中行
-const selectRows = ref<IStaff[]>([])
-const handleSelectionChange = (rows: IStaff[]) => {
+const selectRows = ref<Staff[]>([])
+const handleSelectionChange = (rows: Staff[]) => {
   selectRows.value = JSON.parse(JSON.stringify(rows))
 }
 
 // 分页查询
 const pageQuery = (pagingQueryBody: HashMap, success: any) => {
   staffs.pageQuery(pagingQueryBody).then(res => {
-    const result: PagingResult<IStaff> = res.data.data
+    const result: PagingResult<Staff> = res.data.data
     success(result)
   })
 }
 
 // 格式化列
-const formatterSex = (row: IStaff, column: TableColumnCtx<IStaff>) => {
+const formatterSex = (row: Staff, column: TableColumnCtx<Staff>) => {
   return row.sex === 'M' ? '男' : '女'
 }
 
 // 表头按钮组
-const tableButtons = Object.freeze([
+const tableButtons = [
   {
     text: '刷新',
     type: 'primary',
@@ -87,8 +85,7 @@ const tableButtons = Object.freeze([
     }
   },
   {
-    text: '办理入职',
-    type: 'primary',
+    text: '新增',
     icon: 'CirclePlus',
     click: () => {
       dialogFormVisible.value = true
@@ -96,8 +93,7 @@ const tableButtons = Object.freeze([
     }
   },
   {
-    text: '办理离职',
-    type: 'primary',
+    text: '删除',
     icon: 'Delete',
     click: () => {
       if (_.isEmpty(selectRows.value) || selectRows.value.length > 1) {
@@ -105,7 +101,27 @@ const tableButtons = Object.freeze([
         return
       }
       // const ids = selectRows.value.map(({ staffId }) => staffId)
-      ElMessageBox.alert(JSON.stringify(selectRows.value), '办理离职')
+      ElMessageBox.confirm(
+        '确认删除吗？',
+        '温馨提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '删除失败'
+          })
+        })
       refreshTable()
     }
   },
@@ -138,21 +154,15 @@ const tableButtons = Object.freeze([
       }
     ]
   }
-])
+]
 
 // 操作列按钮
-const handleView = (row: IStaff) => {
-  ElMessageBox.alert(JSON.stringify(row), '查看员工信息')
-}
-const handleModify = (row: IStaff) => {
-  ElMessageBox.alert(JSON.stringify(row), '修改员工信息')
-}
-const becomeRegularStaff = (row: IStaff) => {
-  ElMessageBox.alert(JSON.stringify(row), '办理转正')
-}
-const handleDismiss = (row: IStaff) => {
-  ElMessageBox.alert(JSON.stringify(row), '办理离职')
-}
+// const handleView = (row: Staff) => {
+//   ElMessageBox.alert(JSON.stringify(row), '查看数据')
+// }
+// const handleModify = (row: Staff) => {
+//   ElMessageBox.alert(JSON.stringify(row), '修改数据')
+// }
 
 // 表格列配置
 const tableColumns: Array<TableColumn> = [
@@ -204,11 +214,11 @@ const tableColumns: Array<TableColumn> = [
     columnKey: 'orgName',
     label: '所属组织',
     minWidth: 250
-  },
-  {
-    type: 'slot',
-    slot: 'action'
-  }
+  }// ,
+  // {
+  //   type: 'slot',
+  //   slot: 'action'
+  // }
 ]
 
 // 搜索表单配置
@@ -235,21 +245,21 @@ const formItems: FormItem[] = [
       { text: '男', value: 'M' },
       { text: '女', value: 'F' }
     ],
-    hidden: true
+    hide: true
   },
   {
     elType: 'text',
     prop: 'idcard',
     label: '身份证号',
     placeholder: '请输入身份证号',
-    hidden: true
+    hide: true
   },
   {
     elType: 'text',
     prop: 'orgName',
     label: '所属组织',
     placeholder: '请输入所属组织',
-    hidden: true
+    hide: true
   }
 ]
 
@@ -257,7 +267,7 @@ const formItems: FormItem[] = [
 const formData: HashMap = reactive({})
 
 // TODO: 给行添加样式，此处有BUG，固定列颜色没有同步
-const tableRowClassName = ({ row, rowIndex }: { row: IStaff, rowIndex: number }) => {
+const tableRowClassName = ({ row, rowIndex }: { row: Staff, rowIndex: number }) => {
   console.log(rowIndex)
   if (row.sex === 'M') {
     return 'warning-row'

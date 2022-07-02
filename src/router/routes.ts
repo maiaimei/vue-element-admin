@@ -51,6 +51,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: '统计图表', keepAlive: true }
       },
       {
+        path: 'todo',
+        name: 'TodoView',
+        component: () => import('@/views/workbench/TodoView.vue'),
+        meta: { title: '待办事项', keepAlive: true }
+      },
+      {
         path: 'error',
         name: 'ErrorView',
         component: () => import('@/views/error/ErrorView.vue'),

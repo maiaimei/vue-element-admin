@@ -22,7 +22,6 @@ meuns.findAll().then(res => { menus.value = res.data.data })
 
 const store = useStore()
 const addTab = (item: TabItem) => {
-  console.log(item)
   store.commit('ADDOPENTABS', item)
 }
 </script>

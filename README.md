@@ -23,7 +23,8 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-## Reference
+# Reference
+
 [https://v3.cn.vuejs.org/](https://v3.cn.vuejs.org/)
 
 [https://element-plus.gitee.io/zh-CN/](https://element-plus.gitee.io/zh-CN/)

@@ -16,7 +16,7 @@
       <el-container>
         <el-header class="header">
           <div class="float-left toggle-sidebar">
-            <el-icon @click="isCollapseSidebar = !isCollapseSidebar">
+            <el-icon @click="toogleSidebar">
               <Fold v-if="!isCollapseSidebar" />
               <Expand v-if="isCollapseSidebar" />
             </el-icon>
@@ -210,11 +210,16 @@ const clickTab = (pane: TabsPaneContext, ev: Event) => {
 const updateRoute = (activeName: string) => {
   const tabs = openTabs.value as Array<TabItem>
   const tab = tabs.find(item => item.name === activeName)
-  if (tab) {
+  if (tab !== undefined) {
     const tabJson = JSON.parse(JSON.stringify(tab))
     router.push(tabJson.path)
   }
 }
+
+const toogleSidebar = () => {
+  isCollapseSidebar.value = !isCollapseSidebar.value
+}
+
 </script>
 
 <style scoped lang="scss">

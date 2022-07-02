@@ -3,8 +3,8 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    activeMenu: '',
     breadcrumbs: [],
-    isExpandFormItem: false,
     activeTab: 'HomeView',
     openTabs: [
       {
@@ -17,11 +17,11 @@ export default createStore({
   getters: {
   },
   mutations: {
+    UPDATEACTIVEMENU(state, value) {
+      state.activeMenu = value
+    },
     UPDATEBREADCRUMBS(state, value) {
       state.breadcrumbs = value
-    },
-    UPDATEISEXPANDFORMITEM(state) {
-      state.isExpandFormItem = !state.isExpandFormItem
     },
     ADDOPENTABS(state, payload: TabItem) {
       state.activeTab = payload.name

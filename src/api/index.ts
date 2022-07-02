@@ -12,3 +12,9 @@ export const meuns = {
     return await $axios.get('/api/menus')
   }
 }
+
+export const todoitems = {
+  pageQuery: async (pagingQueryBody: HashMap) => {
+    return await $axios.post('/api/todoitems', pagingQueryBody)
+  }
+}

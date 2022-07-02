@@ -1,3 +1,4 @@
+import type { FormRules } from 'element-plus'
 export interface HashMap {
   // 表示任意类型的属性
   [propName: string]: unknown
@@ -19,7 +20,7 @@ export interface PagingResult<T> {
 export interface PagingQueryBody {
   current: number,
   size: number,
-  [propName: string]: unknown
+  [propName: string]: any
 }
 
 export interface TabItem {

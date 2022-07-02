@@ -1,14 +1,14 @@
 <template>
   <!-- 搜索表单 -->
-  <ex-form :isSearchForm="true" :labelWidth="formLabelWidth" :formItems="formItems" :formData="formData"
-    @submitForm="submitForm" @resetForm="resetForm" />
+  <ex-form ref="exFormRef" :isSearchForm="true" :items="formItems" :model="formData" @submitForm="submitForm"
+    @resetForm="resetForm" :labelWidth="formLabelWidth" />
   <!-- 操作按钮 -->
   <ex-toolbar :buttons="tableButtons"></ex-toolbar>
   <!-- 表格 -->
   <el-config-provider :locale="locale">
-    <el-table ref="tableRef" :data="records" style="width: 100%" :height="tableHeight"
-      @filter-change="handleFilterChange" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName"
-      :border="tableBorder" :key="tableKey">
+    <el-table ref="tableRef" :key="tableKey" :data="records" :border="tableBorder" style="width: 100%"
+      :height="tableHeight" @filter-change="handleFilterChange" @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName">
       <template v-for="(item, index) in tableColumns">
         <!-- 显示多选框 -->
         <el-table-column v-if="item.type === 'selection'" type="selection" width="50" fixed="left" align="center"
@@ -40,15 +40,14 @@
 <script setup lang="ts">
 import _ from 'lodash'
 import { reactive, ref, unref, nextTick, onMounted, watch } from 'vue'
-import { useStore } from 'vuex'
+import { ElTable, ElPagination } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { getBoundingClientRect } from '@/utils/dom.util'
-import { HashMap, TableColumn, PagingQueryBody, PagingResult, FormItem } from '@/types'
-import ExForm from '@/components/ExForm.vue'
+import { HashMap, PagingQueryBody, PagingResult, TableColumn, FormItem } from '@/types'
+import ExForm from './ExForm.vue'
 import ExToolbar from './ExToolbar.vue'
 
 const locale = ref(zhCn)
-const store = useStore()
 
 // 接收父组件传递的属性
 const props = defineProps({
@@ -58,8 +57,7 @@ const props = defineProps({
   },
   formItems: {
     type: Array as () => Array<FormItem>,
-    default: () => [],
-    required: true
+    default: () => []
   },
   formData: {
     type: Object as () => HashMap,
@@ -74,18 +72,19 @@ const props = defineProps({
     type: Array as () => Array<any>
   },
   tableColumns: {
-    type: Array as () => Array<TableColumn>
+    type: Array as () => Array<TableColumn>,
+    required: true
   },
   tableBorder: {
     type: Boolean
   },
   tableRowClassName: {
-    type: Function
+    type: Object as () => any
   },
-  tablePageCurrent: {
+  currentPageNumber: {
     type: Number
   },
-  tablePageSize: {
+  pageSize: {
     type: Number
   }
 })
@@ -95,26 +94,26 @@ const emit = defineEmits(['pageQuery', 'handleSelectionChange'])
 
 const refreshTable = () => {
   pagingQueryBody.current = 1
-  isChangeSize.value = true
+  isChangePageSize.value = true
   pageQuery(pagingQueryBody)
 }
+
 // 对外暴露属性或者方法
 defineExpose({
   refreshTable
 })
 
-const reservedHeight = 60
 const tableHeight = ref(250)
-const tableRef = ref()
-const paginationRef = ref()
+const tableRef = ref<InstanceType<typeof ElTable>>()
+const paginationRef = ref<InstanceType<typeof ElPagination>>()
 
 const records = ref<any[]>([])
 const total = ref(1)
-const current = ref(props.tablePageCurrent || 1)
-const size = ref(props.tablePageSize || 20)
+const current = ref(props.currentPageNumber || 1)
+const size = ref(props.pageSize || 20)
 
 const pagingQueryBody = reactive<PagingQueryBody>({ current: current.value, size: size.value })
-const isChangeSize = ref(false)
+const isChangePageSize = ref(false)
 
 // 初始化默认筛选条件
 _.forEach(Reflect.ownKeys(props.formData), key => {
@@ -128,7 +127,7 @@ const pageQuery = (pagingQueryBody: PagingQueryBody) => {
     total.value = result.total
     current.value = result.current
     size.value = result.size
-    isChangeSize.value = false
+    isChangePageSize.value = false
   })
 }
 
@@ -157,12 +156,13 @@ const handleFilterChange = (filterConditions: unknown) => {
 const handleSizeChange = (val: number) => {
   pagingQueryBody.current = 1
   pagingQueryBody.size = val
-  isChangeSize.value = true
+  isChangePageSize.value = true
   pageQuery(pagingQueryBody)
 }
+
 // 改变页码
 const handleCurrentChange = (val: number) => {
-  if (isChangeSize.value) {
+  if (isChangePageSize.value) {
     return
   }
   pagingQueryBody.current = val
@@ -179,32 +179,39 @@ const handleSelectionChange = (val: any[]) => {
 
 // 搜索表单
 const formData = reactive(props.formData)
+// 查询操作
 const submitForm = (data: HashMap) => {
   handleFilterChange(data)
 }
+// 重置操作
 const resetForm = (data: HashMap) => {
   handleFilterChange(data)
 }
 
 // 表格高度自适应
+const otherHeights = 60
 async function computeTableHeight() {
   const tableProxy = unref(tableRef)
   const tableEle = tableProxy?.$el as Element
   const tableRect = getBoundingClientRect(tableEle) as DOMRect
   // console.log('tableRect', tableRect)
 
-  tableHeight.value = window.innerHeight - tableRect.top - reservedHeight
+  tableHeight.value = window.innerHeight - tableRect.top - otherHeights
   window.onresize = function () {
-    tableHeight.value = window.innerHeight - tableRect.top - reservedHeight
+    tableHeight.value = window.innerHeight - tableRect.top - otherHeights
   }
 }
+
+// 调整浏览器窗口大小时触发表格高度自适应
 onMounted(() => {
-  // nextTick 将回调推迟到下一个 DOM 更新周期之后执行
   nextTick(() => {
     computeTableHeight()
   })
 })
-watch(() => store.state.isExpandFormItem, () => {
+
+// 展开或收起隐藏表单项触发表格高度自适应
+const exFormRef: any = ref(null)
+watch(() => exFormRef?.value?.isExpandFormItem, () => {
   nextTick(() => {
     computeTableHeight()
   })

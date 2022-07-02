@@ -30,7 +30,6 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 onMounted(() => {
   dom = proxy?.$refs.echartRef as HTMLElement // 获取的DOM根节点
-  console.log(dom)
   if (dom !== null) {
     echartInstance = echarts.init(dom) // 初始化 echart
     echartInstance.setOption(props.option) // 绘制
@@ -38,6 +37,7 @@ onMounted(() => {
 })
 
 function resize() {
+  console.log('resize chart')
   if (echartInstance !== null) {
     echartInstance.resize()
   }

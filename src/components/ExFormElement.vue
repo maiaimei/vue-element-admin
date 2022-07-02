@@ -48,17 +48,16 @@
 </template>
 
 <script setup lang="ts">
-import { HashMap, FormItem } from '@/types'
 import { reactive } from 'vue'
+import { HashMap, FormItem } from '@/types'
 
-// defineProps 接收与 props 选项相同的值
 const props = defineProps({
   // 表单元素配置
   item: {
     type: Object as () => FormItem,
     required: true
   },
-  // 表单提交数据
+  // 表单数据
   model: {
     type: Object as () => HashMap,
     default: function () {
