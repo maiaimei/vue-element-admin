@@ -15,12 +15,12 @@
 
   <!-- Form -->
   <el-dialog v-model="dialogFormVisible" title="Shipping address" draggable>
-    <el-form :model="form">
-      <el-form-item label="Promotion name" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
+    <el-form :model="dialogFormData">
+      <el-form-item label="Promotion name" :label-width="dialogFormLabelWidth">
+        <el-input v-model="dialogFormData.name" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Zones" :label-width="formLabelWidth">
-        <el-select v-model="form.region" placeholder="Please select a zone">
+      <el-form-item label="Zones" :label-width="dialogFormLabelWidth">
+        <el-select v-model="dialogFormData.region" placeholder="Please select a zone">
           <el-option label="Zone No.1" value="shanghai" />
           <el-option label="Zone No.2" value="beijing" />
         </el-select>
@@ -276,10 +276,9 @@ const tableRowClassName = ({ row, rowIndex }: { row: Staff, rowIndex: number }) 
   }
 }
 
+const dialogFormLabelWidth = '140px'
 const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-
-const form = reactive({
+const dialogFormData = reactive({
   name: '',
   region: '',
   date1: '',

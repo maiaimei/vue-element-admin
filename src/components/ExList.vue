@@ -1,7 +1,7 @@
 <template>
   <!-- 搜索表单 -->
-  <ex-form ref="exFormRef" :isSearchForm="true" :items="formItems" :model="formData" @submitForm="submitForm"
-    @resetForm="resetForm" :labelWidth="formLabelWidth" />
+  <ex-form ref="searchFormRef" v-if="formItems.length > 0" :isSearchForm="true" :items="formItems" :model="formData"
+    @submitForm="submitForm" @resetForm="resetForm" :labelWidth="formLabelWidth" />
   <!-- 操作按钮 -->
   <ex-toolbar :buttons="tableButtons"></ex-toolbar>
   <!-- 表格 -->
@@ -204,13 +204,14 @@ async function computeTableHeight() {
 // 调整浏览器窗口大小时触发表格高度自适应
 onMounted(() => {
   nextTick(() => {
+    console.log('browse')
     computeTableHeight()
   })
 })
 
 // 展开或收起隐藏表单项触发表格高度自适应
-const exFormRef: any = ref(null)
-watch(() => exFormRef?.value?.isExpandFormItem, () => {
+const searchFormRef: any = ref(null)
+watch(() => searchFormRef?.value?.isExpandFormItem, () => {
   nextTick(() => {
     computeTableHeight()
   })

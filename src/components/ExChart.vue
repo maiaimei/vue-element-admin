@@ -1,5 +1,5 @@
 <template>
-  <div ref="echartRef" :style="{ height: height, width: width }"></div>
+  <div ref="echartRef" :style="{ height: height, width: width }" :class="{ hide: !visible }"></div>
 </template>
 
 <script setup lang="ts">
@@ -32,19 +32,22 @@ const echartRef = ref()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 onMounted(() => {
-  dom = proxy?.$refs.echartRef as HTMLElement // 获取的DOM根节点
+  dom = proxy?.$refs.echartRef as HTMLElement
   if (dom !== null) {
-    echartInstance = echarts.init(dom) // 初始化 echart
-    echartInstance.setOption(props.option) // 绘制
+    echartInstance = echarts.init(dom)
+    echartInstance.setOption(props.option)
   }
 })
 
 const isActivated = ref(true)
+const visible = ref(true)
 onActivated(() => {
   isActivated.value = true
+  resize()
 })
 onDeactivated(() => {
   isActivated.value = false
+  visible.value = false
 })
 
 function resize() {
@@ -52,6 +55,7 @@ function resize() {
     // 设置一定延时，否则收缩/展开侧边栏调整图表大小有问题
     setTimeout(() => {
       echartInstance.resize()
+      visible.value = true
     }, 300)
   }
 }
@@ -71,4 +75,7 @@ useResize()
 </script>
 
 <style scoped lang="scss">
+.hide {
+  visibility: hidden
+}
 </style>
