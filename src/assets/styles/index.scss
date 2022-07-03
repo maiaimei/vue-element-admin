@@ -7,6 +7,7 @@ $sidebar-menu-text: #fff;
 $sidebar-width: 260px !important;
 $sidebar-collapse-width: 64px !important;
 $header-height: 60px;
+$--el-menu-icon-width: 24px;
 
 html,
 body {
@@ -54,6 +55,14 @@ body {
     .el-sub-menu__title {
         color: $sidebar-menu-text;
 
+        i {
+            margin-right: 5px;
+            width: var(--el-menu-icon-width);
+            text-align: center;
+            font-size: 18px;
+            vertical-align: middle;
+        }
+
         &:hover,
         &:focus,
         &.is-active {
@@ -64,6 +73,13 @@ body {
 
 .sidebar-collapse {
     width: $sidebar-collapse-width;
+
+    .el-menu-item,
+    .el-sub-menu__title {
+        i {
+            margin-right: 0;
+        }
+    }
 
     .logo {
         h1 {

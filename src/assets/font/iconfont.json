@@ -1,10 +1,66 @@
 {
   "id": "3457895",
-  "name": "MIS",
+  "name": "vue-element-admin",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
   "glyphs": [
+    {
+      "icon_id": "826149",
+      "name": "上移",
+      "font_class": "move-up",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "826164",
+      "name": "下移",
+      "font_class": "move-down",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "3369142",
+      "name": "复制",
+      "font_class": "copy",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "3369297",
+      "name": "打印",
+      "font_class": "print",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "5127314",
+      "name": "export",
+      "font_class": "export",
+      "unicode": "e787",
+      "unicode_decimal": 59271
+    },
+    {
+      "icon_id": "5127371",
+      "name": "import",
+      "font_class": "import",
+      "unicode": "e7a9",
+      "unicode_decimal": 59305
+    },
+    {
+      "icon_id": "312590",
+      "name": "tree",
+      "font_class": "tree",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "18592533",
+      "name": "workbench",
+      "font_class": "workbench",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
     {
       "icon_id": "812030",
       "name": "setting",

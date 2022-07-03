@@ -34,6 +34,7 @@ export interface MenuItem {
   title: string,
   path: string,
   icon?: string,
+  iconfont?: string,
   children?: Array<MenuItem>,
   hasAuthority?: boolean
 }

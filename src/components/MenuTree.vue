@@ -2,10 +2,14 @@
   <template v-for="(item, index) in menus" :key="index">
     <template v-if="item.hasAuthority">
       <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
-        <template #title><span>{{ item.title }}</span></template>
+        <template #title>
+          <ex-icon v-if="item.icon || item.iconfont" :icon="item.icon" :iconfont="item.iconfont" />
+          <span>{{ item.title }}</span>
+        </template>
         <menu-sub-tree :menus="item.children" />
       </el-sub-menu>
       <el-menu-item v-else :index="item.path">
+        <ex-icon v-if="item.icon || item.iconfont" :icon="item.icon" :iconfont="item.iconfont" />
         <span>{{ item.title }}</span>
       </el-menu-item>
     </template>
@@ -14,6 +18,7 @@
 
 <script setup lang="ts">
 import MenuSubTree from './MenuSubTree.vue'
+import ExIcon from './ExIcon.vue'
 import _ from 'lodash'
 import { MenuItem } from '@/types'
 import menus from '@/config/menu'

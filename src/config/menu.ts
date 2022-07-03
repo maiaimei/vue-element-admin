@@ -5,6 +5,7 @@ const menus: Array<MenuItem> = [
     name: 'workbench',
     title: '工作台',
     path: '#workbench',
+    iconfont: 'workbench',
     children: [
       {
         name: 'TodoView',
@@ -22,6 +23,7 @@ const menus: Array<MenuItem> = [
     name: 'systemmanage',
     title: '系统管理',
     path: '#systemmanage',
+    icon: 'Setting',
     children: [
       {
         name: 'organization',
@@ -48,22 +50,26 @@ const menus: Array<MenuItem> = [
   {
     name: 'ListView',
     title: '列表页面',
-    path: '/list'
+    path: '/list',
+    icon: 'List'
   },
   {
     name: 'TreeView',
     title: '树形页面',
-    path: '/tree'
+    path: '/tree',
+    iconfont: 'tree'
   },
   {
     name: 'FormView',
     title: '表单页面',
-    path: '/form'
+    path: '/form',
+    icon: 'Document'
   },
   {
     name: '4',
     title: '异常页面',
     path: 'error',
+    icon: 'CircleClose',
     children: [
       {
         name: 'ErrorView',
@@ -85,12 +91,14 @@ const menus: Array<MenuItem> = [
   {
     name: 'ChartView',
     title: '统计图表',
-    path: '/chart'
+    path: '/chart',
+    icon: 'Histogram'
   },
   {
     name: '8',
     title: '多级分组导航',
     path: 'multi-nav',
+    icon: 'Menu',
     children: [
       {
         name: '9',
