@@ -7,7 +7,7 @@ import { ref, ComponentInternalInstance, getCurrentInstance, onMounted, onActiva
 import { useStore } from 'vuex'
 import * as echarts from 'echarts'
 import { EChartsType } from 'echarts'
-import useResize from '@/hooks/useResize'
+import useResizeChart from '@/hooks/useResizeChart'
 
 const store = useStore()
 
@@ -43,14 +43,14 @@ const isActivated = ref(true)
 const visible = ref(true)
 onActivated(() => {
   isActivated.value = true
-  resize()
+  resizeChart()
 })
 onDeactivated(() => {
   isActivated.value = false
   visible.value = false
 })
 
-function resize() {
+function resizeChart() {
   if (echartInstance !== null && isActivated.value) {
     // 设置一定延时，否则收缩/展开侧边栏调整图表大小有问题
     setTimeout(() => {
@@ -63,15 +63,15 @@ function resize() {
 // 监听resizeChartTimer实时调整图表大小
 const resizeChartTimer = computed(() => store.state.resizeChartTimer)
 watch(() => resizeChartTimer.value, () => {
-  resize()
+  resizeChart()
 })
 
 // 暴露函数 （供hook调用）
 defineExpose({
-  resize
+  resizeChart
 })
 
-useResize()
+useResizeChart()
 </script>
 
 <style scoped lang="scss">

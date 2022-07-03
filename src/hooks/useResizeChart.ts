@@ -5,14 +5,14 @@ export default function () {
 
   onMounted(() => {
     proxy = getCurrentInstance()
-    window.addEventListener('resize', resize)
+    window.addEventListener('resize', resizeChart)
   })
 
   onBeforeUnmount(() => {
-    window.removeEventListener('resize', resize)
+    window.removeEventListener('resize', resizeChart)
   })
 
-  function resize() {
-    proxy?.exposed?.resize()
+  function resizeChart() {
+    proxy?.exposed?.resizeChart()
   }
 }

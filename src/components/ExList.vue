@@ -8,7 +8,7 @@
   <el-config-provider :locale="locale">
     <el-table ref="tableRef" :key="tableKey" :data="records" :border="tableBorder" style="width: 100%"
       :height="tableHeight" @filter-change="handleFilterChange" @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName">
+      :row-class-name="tableRowClassName" :class="{ hide: !visible }">
       <template v-for="(item, index) in tableColumns">
         <!-- 显示多选框 -->
         <el-table-column v-if="item.type === 'selection'" type="selection" width="50" fixed="left" align="center"
@@ -32,20 +32,21 @@
     <el-pagination ref="paginationRef" layout="total, sizes, prev, pager, next, jumper" :total="total"
       v-model:currentPage="current" v-model:page-size="size" :page-sizes="[10, 20, 30, 50, 100]" :default-page-size="10"
       :pager-count="5" @size-change="handleSizeChange" @current-change="handleCurrentChange" background prev-text="上一页"
-      next-text="下一页">
+      next-text="下一页" :class="{ hide: !visible }">
     </el-pagination>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash'
-import { reactive, ref, unref, nextTick, onMounted, watch } from 'vue'
+import { reactive, ref, unref, nextTick, onMounted, onActivated, onDeactivated, watch } from 'vue'
 import { ElTable, ElPagination } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { getBoundingClientRect } from '@/utils/dom.util'
 import { HashMap, PagingQueryBody, PagingResult, TableColumn, FormItem } from '@/types'
 import ExForm from './ExForm.vue'
 import ExToolbar from './ExToolbar.vue'
+import useResizeTable from '@/hooks/useResizeTable'
 
 const locale = ref(zhCn)
 
@@ -91,17 +92,6 @@ const props = defineProps({
 
 // 接收父组件传递的方法
 const emit = defineEmits(['pageQuery', 'handleSelectionChange'])
-
-const refreshTable = () => {
-  pagingQueryBody.current = 1
-  isChangePageSize.value = true
-  pageQuery(pagingQueryBody)
-}
-
-// 对外暴露属性或者方法
-defineExpose({
-  refreshTable
-})
 
 const tableHeight = ref(250)
 const tableRef = ref<InstanceType<typeof ElTable>>()
@@ -188,24 +178,42 @@ const resetForm = (data: HashMap) => {
   handleFilterChange(data)
 }
 
-// 表格高度自适应
-const otherHeights = 60
-async function computeTableHeight() {
-  const tableProxy = unref(tableRef)
-  const tableEle = tableProxy?.$el as Element
-  const tableRect = getBoundingClientRect(tableEle) as DOMRect
+const refreshTable = () => {
+  pagingQueryBody.current = 1
+  isChangePageSize.value = true
+  pageQuery(pagingQueryBody)
+}
 
-  tableHeight.value = window.innerHeight - tableRect.top - otherHeights
-  window.onresize = function () {
+// 表格高度自适应
+const visible = ref(true)
+const isActivated = ref(true)
+const otherHeights = 60
+function resizeTable() {
+  if (isActivated.value) {
+    const tableProxy = unref(tableRef)
+    const tableEle = tableProxy?.$el as Element
+    const tableRect = getBoundingClientRect(tableEle) as DOMRect
+
     tableHeight.value = window.innerHeight - tableRect.top - otherHeights
+    visible.value = true
   }
 }
+
+onActivated(() => {
+  isActivated.value = true
+  nextTick(() => {
+    resizeTable()
+  })
+})
+onDeactivated(() => {
+  isActivated.value = false
+  visible.value = false
+})
 
 // 调整浏览器窗口大小时触发表格高度自适应
 onMounted(() => {
   nextTick(() => {
-    console.log('browse')
-    computeTableHeight()
+    resizeTable()
   })
 })
 
@@ -213,13 +221,24 @@ onMounted(() => {
 const searchFormRef: any = ref(null)
 watch(() => searchFormRef?.value?.isExpandFormItem, () => {
   nextTick(() => {
-    computeTableHeight()
+    resizeTable()
   })
 })
 
 // 初始化表格
 pageQuery(pagingQueryBody)
+
+// 对外暴露属性或者方法
+defineExpose({
+  refreshTable,
+  resizeTable
+})
+
+useResizeTable()
 </script>
 
 <style scoped lang="scss">
+.hide {
+  visibility: hidden
+}
 </style>
