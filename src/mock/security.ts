@@ -22,6 +22,11 @@ Mock.mock('/api/login', 'post', (options: { body: string }) => {
   if (jsonData.username === 'maiaimei' && jsonData.password === '123') {
     data = {
       nickname: '初冬十月',
+      staffNumber: '123456',
+      organization: '研发部',
+      position: '软件工程师',
+      email: '1211674185@qq.com',
+      mobile: '15989238815',
       menus: ['#workbench', '/todo', '#done',
         '/list', '/tree', '/form', '/chart',
         'error', '/error', '/notfound', '/unauthorized']

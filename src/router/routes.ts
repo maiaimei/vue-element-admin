@@ -27,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: '首页' }
       },
       {
+        path: 'my',
+        name: 'MineView',
+        component: () => import('@/views/MineView.vue'),
+        meta: { title: '个人中心' }
+      },
+      {
         path: 'list',
         name: 'ListView',
         component: () => import('@/views/ListView.vue'),

@@ -167,7 +167,7 @@ onMounted(() => {
     } else {
       clearInterval(notificationTimer)
     }
-  }, 10000)
+  }, 50000)
 })
 
 const toDoItemsConfig = {

@@ -1,7 +1,7 @@
-import type { FormRules } from 'element-plus'
+import type { FormItemRule } from 'element-plus'
 export interface HashMap {
   // 表示任意类型的属性
-  [propName: string]: unknown
+  [propName: string]: any
 }
 
 export interface Result<T> {
@@ -43,7 +43,7 @@ export interface FormItem {
   slot?: string,
   prop?: string,
   label?: string,
-  rules?: FormRules,
+  rules?: FormItemRule | FormItemRule[] | Arrayable<FormItemRule>,
   options?: Array<{ text: unknown, value: unknown }>,
   [propName: string]: unknown
 }

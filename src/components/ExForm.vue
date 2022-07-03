@@ -86,9 +86,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
   emit('resetForm', formData)
 }
 
+const restoreForm = () => {
+  formRef.value?.resetFields()
+}
+
 // 向父组件暴露属性或方法
 defineExpose({
-  isExpandFormItem
+  isExpandFormItem,
+  restoreForm
 })
 </script>
 

@@ -148,6 +148,8 @@ const onToggleFullscreen = () => {
 const onClickAvatar = (command: string) => {
   switch (command) {
     case 'personal': {
+      store.commit('ADDOPENTABS', { name: 'MineView', title: '个人中心', path: '/my' })
+      router.push('/my')
       break
     }
     case 'logout': {
