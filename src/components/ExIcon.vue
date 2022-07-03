@@ -14,6 +14,7 @@
     <Message v-if="icon === 'Message'" />
     <Avatar v-if="icon === 'Avatar'" />
     <CircleClose v-if="icon === 'CircleClose'" />
+    <Star v-if="icon === 'Star'" />
   </el-icon>
 </template>
 
@@ -31,7 +32,8 @@ import {
   Menu,
   Message,
   Avatar,
-  CircleClose
+  CircleClose,
+  Star
 } from '@element-plus/icons-vue'
 
 const props = defineProps({

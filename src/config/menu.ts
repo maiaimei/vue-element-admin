@@ -95,6 +95,12 @@ const menus: Array<MenuItem> = [
     icon: 'Histogram'
   },
   {
+    name: 'DemoView',
+    title: '基础知识',
+    path: '/demo',
+    icon: 'Star'
+  },
+  {
     name: '8',
     title: '多级分组导航',
     path: 'multi-nav',

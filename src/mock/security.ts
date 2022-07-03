@@ -16,7 +16,8 @@ Mock.mock('/api/login', 'post', (options: { body: string }) => {
         'item-2', '#item-2-1', '#item-2-2',
         '#item-3', '#item-3-1', '#item-3-2',
         '#item-4', '#item-4-1', '#item-4-2',
-        '#item-5', '#item-5-1', '#item-5-2', '#item-5-3', '#item-5-4', '#item-5-5']
+        '#item-5', '#item-5-1', '#item-5-2', '#item-5-3', '#item-5-4', '#item-5-5',
+        '/demo']
     }
   }
   if (jsonData.username === 'maiaimei' && jsonData.password === '123') {

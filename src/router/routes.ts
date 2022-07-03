@@ -57,6 +57,12 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: '统计图表' }
       },
       {
+        path: 'demo',
+        name: 'DemoView',
+        component: () => import('@/views/demo/index.vue'),
+        meta: { title: '基础知识' }
+      },
+      {
         path: 'todo',
         name: 'TodoView',
         component: () => import('@/views/workbench/TodoView.vue'),

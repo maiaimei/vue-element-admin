@@ -19,6 +19,8 @@ module.exports = {
     ecmaVersion: 2020
   },
   rules: {
+    // 关闭组件命名规则
+    'vue/multi-word-component-names': 'off',
     'space-before-function-paren': 0,
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
